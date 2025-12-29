@@ -1,0 +1,128 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Order extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'tipe_pendaftaran',
+        'ketersediaan_hewan_id',
+        'jenis_hewan',
+        'berat_hewan',
+        'total_hewan',
+        'perkiraan_daging',
+        'total_harga',
+        'bukti_pembayaran',
+        'status',
+        'alasan_penolakan',
+    ];
+
+
+
+    protected $casts = [
+        'total_harga' => 'decimal:2',
+        'berat_hewan' => 'decimal:2',
+        'perkiraan_daging' => 'decimal:2',
+        'total_hewan' => 'integer',
+    ];
+
+    // Relationships
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function ketersediaanHewan()
+    {
+        return $this->belongsTo(KetersediaanHewan::class);
+    }
+
+    public function danaDKMs()
+    {
+        return $this->hasMany(DanaDKM::class, 'order_id');
+    }
+
+
+    // Accessors
+    public function getTotalHargaFormattedAttribute()
+    {
+        return 'Rp ' . number_format($this->total_harga, 0, ',', '.');
+    }
+
+    public function getBeratHewanFormattedAttribute()
+    {
+        return number_format($this->berat_hewan, 1, ',', '.') . ' kg';
+    }
+
+    public function getPerkiraanDagingFormattedAttribute()
+    {
+        return number_format($this->perkiraan_daging, 1, ',', '.') . ' kg';
+    }
+
+    public function getStatusFormattedAttribute()
+    {
+        $statuses = [
+            'pending' => 'Menunggu',
+            'menunggu_verifikasi' => 'Menunggu Verifikasi',
+            'disetujui' => 'Disetujui',
+            'ditolak' => 'Ditolak'
+        ];
+
+        return $statuses[$this->status] ?? $this->status;
+    }
+
+    public function getBuktiPembayaranUrlAttribute()
+    {
+        if ($this->bukti_pembayaran && file_exists(storage_path('app/public/bukti_pembayaran/' . $this->bukti_pembayaran))) {
+            return asset('storage/bukti_pembayaran/' . $this->bukti_pembayaran);
+        }
+
+        return null;
+    }
+
+    /**
+     * Relasi ke model Penyembelihan.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function penyembelihan()
+    {
+        return $this->hasOne(Penyembelihan::class);
+    }
+
+    /**
+     * Cek apakah order sudah memiliki penyembelihan.
+     *
+     * @return bool
+     */
+    public function hasPenyembelihan(): bool
+    {
+        return !is_null($this->penyembelihan);
+    }
+
+    /**
+     * Cek apakah order sudah tersembelih.
+     *
+     * @return bool
+     */
+    public function isTersembelih(): bool
+    {
+        return $this->hasPenyembelihan() && $this->penyembelihan->isTersembelih();
+    }
+
+    /**
+     * Cek apakah order sudah terdistribusi.
+     *
+     * @return bool
+     */
+    public function isTerdistribusi(): bool
+    {
+        return $this->hasPenyembelihan() && $this->penyembelihan->isTerdistribusi();
+    }
+}
