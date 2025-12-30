@@ -26,8 +26,7 @@ return new class extends Migration
 
             $table->enum('status', [
                 'menunggu penyembelihan',
-                'tersembelih',
-                'terdistribusi'
+                'tersembelih'
             ])->default('menunggu penyembelihan');
 
             $table->string('dokumentasi_penyembelihan')->nullable();

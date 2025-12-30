@@ -25,6 +25,18 @@ return new class extends Migration
                 ->constrained('ketersediaan_hewan')
                 ->nullOnDelete();
 
+            $table->foreignId('pelaksanaan_id')
+                ->nullable()
+                ->references('id')->on('pelaksanaans')
+                ->constrained('pelaksanaans')
+                ->nullOnDelete();
+
+            $table->foreignId('bank_id')
+                ->nullable()
+                ->references('id')->on('bank_penerima')
+                ->constrained('bank_penerima')
+                ->nullOnDelete();
+
             $table->string('jenis_hewan')->nullable();
             
             $table->enum('tipe_pendaftaran', ['transfer', 'kirim langsung']);

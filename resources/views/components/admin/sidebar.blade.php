@@ -113,7 +113,6 @@
                 </div>
             </li>
 
-            <!-- Nav Item - Charts -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse"
                     data-target="#collapsePagesDistribusi" aria-expanded="true"
@@ -125,9 +124,11 @@
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Semua Data:</h6>
-                        <a class="collapse-item" href="{{ route('admin.penyembelihan.index') }}">Distribusi Daging</a>
+                        <a class="collapse-item" href="{{ route('admin.distribusi.index') }}">Semua Data</a>
+                        <div class="collapse-divider"></div>
+                        <h6 class="collapse-header">Kategori Pembayaran:</h6>
                         <a class="collapse-item"
-                            href="{{ route('admin.penyembelihans.menunggu-penyembelihan') }}">Penerima Daging</a>
+                            href="{{ route('admin.distributions.perkiraan-penerima') }}">Perhitungan Pendistribusian</a>
                     </div>
                 </div>
             </li>
@@ -153,6 +154,7 @@
                         <h6 class="collapse-header">Custom Components:</h6>
                         <a class="collapse-item" href="{{ route('admin.dana-dkm.index') }}">Dana DKM</a>
                         <a class="collapse-item" href="{{ route('admin.dana-operasional.index') }}">Dana Operasional</a>
+                        <a class="collapse-item" href="{{ route('admin.bank-penerima.index') }}">Bank Penerima</a>
                     </div>
                 </div>
             </li>

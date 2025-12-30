@@ -47,85 +47,9 @@
 
                         {{-- DESKTOP TABLE --}}
                         <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th width="50">No</th>
-                                    <th>Jenis Hewan</th>
-                                    <th>Bobot</th>
-                                    <th>Harga per Ekor</th>
-                                    <th>Jumlah</th>
-                                    <th>Foto</th>
-                                    <th width="140" class="text-center">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="table-body">
-                                @forelse($ketersediaan as $item)
-                                    <tr class="fade-in">
-                                        <td class="font-weight-bold">{{ $loop->iteration }}</td>
-                                        <td>
-                                            <span class="animal-type">{{ $item->jenis_hewan }}</span>
-                                        </td>
-                                        <td>
-                                            <span class="custom-badge badge-weight">
-                                                {{ $item->bobot_formatted }}
-                                            </span>
-                                        </td>
-                                        <td class="price-tag">{{ $item->harga_formatted }}</td>
-                                        <td>
-                                            <span class="custom-badge badge-quantity">
-                                                {{ $item->jumlah }} ekor
-                                            </span>
-                                        </td>
-                                        <td>
-                                            @if ($item->foto)
-                                                <img src="{{ $item->foto_url }}" alt="{{ $item->jenis_hewan }}"
-                                                    class="photo-thumbnail" data-toggle="modal"
-                                                    data-target="#imageModal{{ $item->id }}">
-                                            @else
-                                                <span class="text-muted">
-                                                    <i class="fas fa-image"></i>
-                                                </span>
-                                            @endif
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="d-inline-flex">
-                                                <a href="{{ route('admin.ketersediaan-hewan.edit', $item->id) }}"
-                                                    class="action-btn btn-warning" title="Edit" data-toggle="tooltip">
-                                                    <i class="fas fa-edit fa-xs text-white"></i>
-                                                </a>
-                                                <form
-                                                    action="{{ route('admin.ketersediaan-hewan.destroy', $item->id) }}"
-                                                    method="POST" class="d-inline" onsubmit="return confirmDelete()">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="action-btn btn-danger border-0 ml-2"
-                                                        title="Hapus" data-toggle="tooltip">
-                                                        <i class="fas fa-trash fa-xs text-white"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7">
-                                            <div class="empty-state">
-                                                <div class="empty-state-icon">
-                                                    <i class="fas fa-database"></i>
-                                                </div>
-                                                <h4 class="text-gray-700 mb-3">Data Belum Tersedia</h4>
-                                                <p class="text-gray-500 mb-4">Belum ada data hewan kurban
-                                                    yang
-                                                    tersedia. Mulai dengan menambahkan data pertama.</p>
-                                                <a href="{{ route('admin.ketersediaan-hewan.create') }}"
-                                                    class="btn btn-custom">
-                                                    <i class="fas fa-plus-circle mr-2"></i>Tambah Data Hewan
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
+                            <h1 class="h3 mb-0 black text-center">
+                                Buka diperangkat dimobile
+                            </h1>
                         </table>
 
                         {{-- MOBILE VIEW --}}

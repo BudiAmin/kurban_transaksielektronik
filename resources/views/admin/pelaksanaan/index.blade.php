@@ -55,9 +55,10 @@
                                                 <th width="50">No</th>
                                                 <th>Tanggal Pendaftaran</th>
                                                 <th>Tanggal Penutupan</th>
-                                                <th class="mobile-hide">Ketuplak</th>
-                                                <th class="mobile-hide">Lokasi</th>
+                                                <th>Ketuplak</th>
+                                                <th>Lokasi</th>
                                                 <th>Tanggal Penyembelihan</th>
+                                                <th>Status</th>
                                                 <th width="140" class="text-center">Aksi</th>
                                             </tr>
                                         </thead>
@@ -71,11 +72,12 @@
                                                     <td class="date-cell">
                                                         {{ \Carbon\Carbon::parse($item->Tanggal_Penutupan)->format('d M Y') }}
                                                     </td>
-                                                    <td class="mobile-hide">{{ $item->Ketuplak }}</td>
-                                                    <td class="mobile-hide">{{ $item->Lokasi }}</td>
+                                                    <td>{{ $item->Ketuplak }}</td>
+                                                    <td>{{ $item->Lokasi }}</td>
                                                     <td class="date-cell">
                                                         {{ \Carbon\Carbon::parse($item->Penyembelihan)->format('d M Y') }}
                                                     </td>
+                                                    <td>{{ $item->Status }}</td>
                                                     <td class="text-center">
                                                         <div class="d-inline-flex">
                                                             <a href="{{ route('admin.pelaksanaan.edit', $item->id) }}"
@@ -158,21 +160,20 @@
                                                 </div>
                                             </div>
 
-                                            <div class="mobile-row">
-                                                
+                                            <div class="mobile-row">                                                
                                                 <div>
                                                     <div class="mobile-label">Waktu Penyembelihan</div>
                                                     <div class="mobile-value price-tag">{{ \Carbon\Carbon::parse($item->Penyembelihan)->format('d M Y') }}
                                                     </div>
                                                 </div>
-                                                {{-- <div class="text-right">
-                                                    <div class="mobile-label">Lokasi Penyembelihan</div>
+                                                <div class="text-right">
+                                                    <div class="mobile-label">Status</div>
                                                     <div class="mobile-value">
                                                         <span class="custom-badge badge-quantity">
-                                                            {{ \Carbon\Carbon::parse($item->Tanggal_Penutupan)->format('d M Y') }}
+                                                            {{ $item->Status }}
                                                         </span>
                                                     </div>
-                                                </div> --}}
+                                                </div>
                                             </div>
 
                                             <div class="d-flex justify-content-center pt-2">

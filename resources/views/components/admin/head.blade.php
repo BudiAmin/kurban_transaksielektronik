@@ -16,6 +16,8 @@
     <!-- Custom styles -->
     <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -23,14 +25,16 @@
     {{-- css kostum --}}
     <link href="{{ asset('css/admin-index.css') }}" rel="stylesheet">
 
-    <link href="{{ asset('css/admin/pelaksanaan/create.css') }}" rel="stylesheet">
-
     <link href="{{ asset('css/admin/pelaksanaan/edit.css') }}" rel="stylesheet">
-    
+
     <link href="{{ asset('css/admin/ketersediaan/create.css') }}" rel="stylesheet">
 
     <link href="{{ asset('css/admin/ketersediaan/edit.css') }}" rel="stylesheet">
-    
+
+    <link rel="stylesheet" href="{{ asset('css/admin/distribusi/index.css') }}">
+
+    <link rel="stylesheet" href="{{ asset('css/admin/distribusi/create.css') }}">
+
     {{-- for dasboard --}}
     <link href="{{ asset('css/admin/ketersediaan/index.css') }}" rel="stylesheet">
 </head>

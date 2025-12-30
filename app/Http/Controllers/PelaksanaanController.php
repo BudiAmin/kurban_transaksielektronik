@@ -19,6 +19,7 @@ class PelaksanaanController extends Controller
 
         $pelaksanaan = Pelaksanaan::orderBy('created_at', 'desc')
             ->paginate(10);
+            
         return view('admin/pelaksanaan.index', compact('pelaksanaan', 'user'));
     }
 
@@ -113,6 +114,7 @@ class PelaksanaanController extends Controller
             'Ketuplak' => 'required|string|max:100',
             'Lokasi' => 'required|string|max:200',
             'Penyembelihan' => 'required|date|after_or_equal:Tanggal_Penutupan',
+            'Status' => 'required',
         ], [
             'Tanggal_Penutupan.after_or_equal' => 'Tanggal penutupan harus sama atau setelah tanggal pendaftaran.',
             'Penyembelihan.after_or_equal' => 'Tanggal penyembelihan harus sama atau setelah tanggal penutupan.',

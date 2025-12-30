@@ -14,8 +14,8 @@ class PenyembelihanController extends Controller
     {
         $user = auth()->user();
         
-        $penyembelihan = Penyembelihan::orderBy('created_at', 'desc')
-            ->paginate(3);
+        $penyembelihan = Penyembelihan::orderBy('created_at')
+            ->paginate(10);
 
         return view('admin/penyembelihan.index', compact('penyembelihan', 'user'));
     }

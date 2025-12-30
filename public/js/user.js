@@ -1,87 +1,269 @@
-
-document.addEventListener('DOMContentLoaded', () => {
-    // Elements
-    const tipe = document.getElementById('tipe_pendaftaran');
+// form-pendaftaran.js
+document.addEventListener('DOMContentLoaded', function () {
+    // =============================================
+    // 1. ELEMENTS SELECTION
+    // =============================================
+    const tipePendaftaran = document.getElementById('tipe_pendaftaran');
     const transferGroup = document.getElementById('transfer-group');
     const kirimGroup = document.getElementById('kirim-group');
     const beratKirimGroup = document.getElementById('berat-kirim-group');
     const buktiGroup = document.getElementById('bukti-group');
-    const form = document.getElementById('orderForm');
-    const submitBtn = document.getElementById('submitBtn');
+    const bankSelectGroup = document.getElementById('bank-select-group');
+    const bankInfoGroup = document.getElementById('bank-info-group');
+    const bankDetailContainer = document.getElementById('bank-detail-container');
+    const bankSelect = document.getElementById('bank_id');
 
-    // Input elements
+    // Form calculation elements
     const hewanSelect = document.getElementById('ketersediaan_hewan_id');
     const jumlahInput = document.getElementById('total_hewan');
     const jenisHewanInput = document.getElementById('jenis_hewan_input');
     const beratKirimInput = document.getElementById('berat_kirim_input');
 
-    // Hidden fields (akan dikirim ke server)
+    // Hidden fields
     const beratHidden = document.getElementById('berat_hewan_hidden');
     const dagingHidden = document.getElementById('perkiraan_daging_hidden');
     const hargaHidden = document.getElementById('total_harga_hidden');
     const jenisHidden = document.getElementById('jenis_hewan_hidden');
 
-    // Display fields (hanya untuk tampilan)
+    // Display fields
     const beratDisplay = document.getElementById('berat_total_display');
     const dagingDisplay = document.getElementById('perkiraan_daging_display');
     const hargaDisplay = document.getElementById('total_harga_display');
 
-    // Data konversi berdasarkan jenis hewan (sesuai sumber)
-    const konversiHewan = {
-        'sapi': {
-            karkasPersen: 0.50, // 50% rata-rata (45-55%)
-            dagingDariKarkas: 0.75, // 75% dari karkas
-            kepalaPersen: 0.04, // 4% dari berat hidup
-            kakiPerEkor: 4.5, // 4.5 kg per ekor (total 4 kaki)
-            ekorPersen: 0.007, // 0.7% dari berat hidup
-            jeroanPersen: 0.10 // 10% dari berat karkas
-        },
-        'kambing': {
-            // Data untuk kambing (disesuaikan)
-            karkasPersen: 0.40, // 40% dari berat hidup
-            dagingDariKarkas: 0.70, // 70% dari karkas
-            kepalaPersen: 0.03, // 3% dari berat hidup
-            kakiPerEkor: 1.2, // 1.2 kg per ekor
-            ekorPersen: 0.004, // 0.4% dari berat hidup
-            jeroanPersen: 0.08 // 8% dari berat karkas
-        },
-        'domba': {
-            // Data untuk domba (disesuaikan)
-            karkasPersen: 0.42, // 42% dari berat hidup
-            dagingDariKarkas: 0.72, // 72% dari karkas
-            kepalaPersen: 0.03, // 3% dari berat hidup
-            kakiPerEkor: 1.0, // 1.0 kg per ekor
-            ekorPersen: 0.005, // 0.5% dari berat hidup
-            jeroanPersen: 0.09 // 9% dari berat karkas
+    // =============================================
+    // 1. NAVBAR FUNCTIONALITY
+    // =============================================
+    const mobileToggle = document.getElementById('mobileToggle');
+    const navLinks = document.getElementById('navLinks');
+    const userTrigger = document.getElementById('userTrigger');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
+    // Mobile menu toggle
+    if (mobileToggle) {
+        mobileToggle.addEventListener('click', function () {
+            navLinks.classList.toggle('open');
+            this.innerHTML = navLinks.classList.contains('open')
+                ? '<i class="fas fa-times"></i>'
+                : '<i class="fas fa-bars"></i>';
+        });
+    }
+
+    // User dropdown toggle
+    if (userTrigger) {
+        userTrigger.addEventListener('click', function (e) {
+            e.stopPropagation();
+            this.classList.toggle('open');
+            dropdownMenu.classList.toggle('open');
+        });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+        if (userTrigger && !userTrigger.contains(e.target) &&
+            dropdownMenu && !dropdownMenu.contains(e.target)) {
+            userTrigger.classList.remove('open');
+            dropdownMenu.classList.remove('open');
         }
+    });
+
+    // Close mobile menu when clicking on a link
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function () {
+            if (window.innerWidth <= 768 && navLinks) {
+                navLinks.classList.remove('open');
+                if (mobileToggle) {
+                    mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            }
+        });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            if (this.getAttribute('href') === '#') return;
+
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // =============================================
+    // 2. TOGGLE FORM SECTIONS
+    // =============================================
+    function toggleFormSections() {
+        if (!tipePendaftaran) return;
+
+        const isTransfer = tipePendaftaran.value === 'transfer';
+        const isKirim = tipePendaftaran.value === 'kirim langsung';
+
+        // Toggle visibility
+        if (transferGroup) transferGroup.style.display = isTransfer ? 'block' : 'none';
+        if (bankSelectGroup) bankSelectGroup.style.display = isTransfer ? 'block' : 'none';
+        if (buktiGroup) buktiGroup.style.display = isTransfer ? 'block' : 'none';
+        if (kirimGroup) kirimGroup.style.display = isKirim ? 'block' : 'none';
+        if (beratKirimGroup) beratKirimGroup.style.display = isKirim ? 'block' : 'none';
+
+        // Sembunyikan bank info jika bukan transfer
+        if (!isTransfer && bankInfoGroup) {
+            bankInfoGroup.style.display = 'none';
+            if (bankDetailContainer) {
+                bankDetailContainer.innerHTML = '';
+            }
+        }
+
+        // Toggle required attributes
+        if (hewanSelect) hewanSelect.required = isTransfer;
+        if (jenisHewanInput) jenisHewanInput.required = isKirim;
+        if (beratKirimInput) beratKirimInput.required = isKirim;
+        if (bankSelect) bankSelect.required = isTransfer;
+
+        const buktiInput = document.querySelector('input[name="bukti_pembayaran"]');
+        if (buktiInput) buktiInput.required = isTransfer;
+
+        // Reset jika berganti tipe
+        if (isTransfer) {
+            if (jenisHewanInput) jenisHewanInput.value = '';
+            if (beratKirimInput) beratKirimInput.value = '';
+        } else if (isKirim) {
+            if (hewanSelect) hewanSelect.value = '';
+            if (bankSelect) bankSelect.value = '';
+            if (bankInfoGroup) bankInfoGroup.style.display = 'none';
+            if (bankDetailContainer) bankDetailContainer.innerHTML = '';
+        }
+
+        // Hitung ulang
+        hitungDanUpdate();
+    }
+
+    // =============================================
+    // 3. BANK SELECTION FUNCTIONALITY
+    // =============================================
+    function updateBankDetail() {
+        if (!bankSelect || !bankDetailContainer) return;
+
+        const selectedBank = bankSelect.options[bankSelect.selectedIndex];
+
+        if (!selectedBank.value) {
+            bankInfoGroup.style.display = 'none';
+            bankDetailContainer.innerHTML = '';
+            return;
+        }
+
+        const namaBank = selectedBank.getAttribute('data-nama-bank');
+        const noRek = selectedBank.getAttribute('data-no-rek');
+        const asNama = selectedBank.getAttribute('data-as-nama');
+
+        const bankHTML = `
+            <h5 class="card-title mb-3" style="color: var(--primary);">
+                <i class="fas fa-university me-2"></i>Informasi Transfer
+            </h5>
+            
+            <div class="bank-card mb-3">
+                <div class="bank-header">
+                    <h6 class="bank-name mb-1">
+                        <i class="fas fa-building me-2"></i>${namaBank}
+                    </h6>
+                    <div class="bank-number">
+                        <strong>No. Rekening:</strong>
+                        <span class="rekening-number">${noRek}</span>
+                        <button type="button" class="btn-copy" 
+                                data-copy-text="${noRek}"
+                                title="Salin nomor rekening">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="bank-detail">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="mb-2">
+                                <strong><i class="fas fa-user me-2"></i>Atas Nama:</strong>
+                                <br>
+                                <span class="bank-account-name">${asNama}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="transfer-instructions mt-3">
+                <h6 class="mb-2">
+                    <i class="fas fa-list-check me-2"></i>Petunjuk Transfer:
+                </h6>
+                <ol class="small">
+                    <li>Transfer ke rekening <strong>${namaBank}</strong> di atas</li>
+                    <li>Jumlah transfer sesuai dengan <strong>Total Harga</strong></li>
+                    <li>Pastikan nama penerima adalah <strong>${asNama}</strong></li>
+                    <li>Simpan bukti transfer untuk diupload</li>
+                    <li>Upload bukti transfer pada form di atas</li>
+                    <li>Transfer akan diverifikasi oleh panitia</li>
+                </ol>
+            </div>
+        `;
+
+        bankDetailContainer.innerHTML = bankHTML;
+        bankInfoGroup.style.display = 'block';
+
+        // Re-attach copy button event listeners
+        attachCopyButtonListeners();
+    }
+
+    function attachCopyButtonListeners() {
+        document.querySelectorAll('.btn-copy').forEach(button => {
+            button.addEventListener('click', function () {
+                const textToCopy = this.getAttribute('data-copy-text');
+
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const originalHTML = this.innerHTML;
+                    this.innerHTML = '<i class="fas fa-check"></i>';
+                    this.style.background = '#28a745';
+                    this.style.color = 'white';
+                    this.style.borderColor = '#28a745';
+
+                    showToast('Nomor rekening berhasil disalin!', 'success');
+
+                    setTimeout(() => {
+                        this.innerHTML = originalHTML;
+                        this.style.background = '';
+                        this.style.color = '';
+                        this.style.borderColor = '';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                    showToast('Gagal menyalin, coba lagi', 'error');
+                });
+            });
+        });
+    }
+
+    // =============================================
+    // 4. FORM CALCULATION FUNCTIONALITY
+    // =============================================
+    const konversiHewan = {
+        'sapi': { karkasPersen: 0.50, dagingDariKarkas: 0.75, kepalaPersen: 0.04, kakiPerEkor: 4.5, ekorPersen: 0.007, jeroanPersen: 0.10 },
+        'kambing': { karkasPersen: 0.40, dagingDariKarkas: 0.70, kepalaPersen: 0.03, kakiPerEkor: 1.2, ekorPersen: 0.004, jeroanPersen: 0.08 },
+        'domba': { karkasPersen: 0.42, dagingDariKarkas: 0.72, kepalaPersen: 0.03, kakiPerEkor: 1.0, ekorPersen: 0.005, jeroanPersen: 0.09 }
     };
 
-    // Fungsi untuk menghitung perkiraan daging berdasarkan jenis hewan
     function hitungPerkiraanDaging(beratPerEkor, jumlahHewan, jenisHewan) {
         const totalBeratHidup = beratPerEkor * jumlahHewan;
-
-        // Ambil data konversi berdasarkan jenis hewan
         const konversi = konversiHewan[jenisHewan.toLowerCase()] || konversiHewan['sapi'];
 
-        // 1. Hitung berat karkas
         const beratKarkas = totalBeratHidup * konversi.karkasPersen;
-
-        // 2. Hitung daging murni (75% dari berat karkas untuk sapi)
         const dagingMurni = beratKarkas * konversi.dagingDariKarkas;
-
-        // 3. Hitung kepala (4% dari berat hidup untuk sapi)
         const kepalaTotal = totalBeratHidup * konversi.kepalaPersen;
-
-        // 4. Hitung kaki (4.5 kg × jumlah hewan untuk sapi)
         const kakiTotal = konversi.kakiPerEkor * jumlahHewan;
-
-        // 5. Hitung ekor (0.7% dari berat hidup untuk sapi)
         const ekorTotal = totalBeratHidup * konversi.ekorPersen;
-
-        // 6. Hitung jeroan (10% dari berat karkas untuk sapi)
         const jeroanTotal = beratKarkas * konversi.jeroanPersen;
-
-        // 7. TOTAL daging yang bisa didistribusikan
         const totalDagingDistribusi = dagingMurni + kepalaTotal + kakiTotal + ekorTotal + jeroanTotal;
 
         return {
@@ -96,251 +278,137 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Fungsi untuk mendapatkan jenis hewan berdasarkan tipe
-    function getJenisHewan() {
-        let jenisHewan = '';
-
-        if (tipe.value === 'transfer' && hewanSelect.value) {
-            const selectedOption = hewanSelect.options[hewanSelect.selectedIndex];
-            jenisHewan = selectedOption.dataset.jenis || 'sapi'; // Default ke sapi
-        } else if (tipe.value === 'kirim langsung') {
-            jenisHewan = jenisHewanInput.value || 'sapi';
-        }
-
-        return jenisHewan.toLowerCase();
-    }
-
-    // Fungsi untuk menghitung semua nilai
     function hitungDanUpdate() {
+        if (!tipePendaftaran) return;
+
         let beratPerEkor = 0;
         let hargaPerEkor = 0;
         let jenisHewan = '';
 
-        // Reset nilai
-        beratHidden.value = '';
-        dagingHidden.value = '';
-        hargaHidden.value = '';
-        jenisHidden.value = '';
+        // Reset hidden fields
+        if (beratHidden) beratHidden.value = '';
+        if (dagingHidden) dagingHidden.value = '';
+        if (hargaHidden) hargaHidden.value = '';
+        if (jenisHidden) jenisHidden.value = '';
 
         // Ambil data berdasarkan tipe
-        if (tipe.value === 'transfer' && hewanSelect.value) {
+        if (tipePendaftaran.value === 'transfer' && hewanSelect && hewanSelect.value) {
             const selectedOption = hewanSelect.options[hewanSelect.selectedIndex];
             beratPerEkor = parseFloat(selectedOption.dataset.berat) || 0;
             hargaPerEkor = parseFloat(selectedOption.dataset.harga) || 0;
             jenisHewan = selectedOption.dataset.jenis || 'sapi';
-        } else if (tipe.value === 'kirim langsung') {
-            beratPerEkor = parseFloat(beratKirimInput.value) || 0;
-            hargaPerEkor = 0; // Tidak ada harga untuk kirim langsung
-            jenisHewan = jenisHewanInput.value || 'sapi';
+        } else if (tipePendaftaran.value === 'kirim langsung') {
+            beratPerEkor = beratKirimInput ? parseFloat(beratKirimInput.value) || 0 : 0;
+            hargaPerEkor = 0;
+            jenisHewan = jenisHewanInput ? jenisHewanInput.value || 'sapi' : 'sapi';
         }
 
         // Jika berat per ekor tidak valid, reset semua
         if (beratPerEkor <= 0) {
-            beratDisplay.value = '0 kg';
-            dagingDisplay.value = '0 kg';
-            hargaDisplay.value = tipe.value === 'transfer' ? 'Rp 0' :
-                'Tidak ada biaya (Kirim hewan langsung)';
+            if (beratDisplay) beratDisplay.value = '0 kg';
+            if (dagingDisplay) dagingDisplay.value = '0 kg';
+            if (hargaDisplay) {
+                hargaDisplay.value = tipePendaftaran.value === 'transfer' ? 'Rp 0' : 'Tidak ada biaya (Kirim hewan langsung)';
+            }
             return;
         }
 
-        // Hitung total hewan
-        const totalHewan = parseInt(jumlahInput.value) || 1;
+        const totalHewan = jumlahInput ? parseInt(jumlahInput.value) || 1 : 1;
         const jenisHewanLower = jenisHewan.toLowerCase();
 
-        // Hitung menggunakan rumus baru berdasarkan sumber
         const hasilPerhitungan = hitungPerkiraanDaging(beratPerEkor, totalHewan, jenisHewanLower);
-
-        // Untuk perkiraan daging, kita pakai total daging distribusi
         const perkiraanDaging = hasilPerhitungan.totalDagingDistribusi;
         const totalBerat = hasilPerhitungan.totalBeratHidup;
         const totalHarga = hargaPerEkor * totalHewan;
 
-        // Update HIDDEN fields (yang dikirim ke server)
-        beratHidden.value = beratPerEkor;
-        dagingHidden.value = perkiraanDaging.toFixed(2);
-        hargaHidden.value = totalHarga;
-        jenisHidden.value = jenisHewanLower;
+        // Update HIDDEN fields
+        if (beratHidden) beratHidden.value = beratPerEkor;
+        if (dagingHidden) dagingHidden.value = perkiraanDaging.toFixed(2);
+        if (hargaHidden) hargaHidden.value = totalHarga;
+        if (jenisHidden) jenisHidden.value = jenisHewanLower;
 
-        // Update DISPLAY fields (hanya untuk tampilan)
-        beratDisplay.value = totalBerat.toFixed(1) + ' kg';
-        dagingDisplay.value = perkiraanDaging.toFixed(1) + ' kg';
+        // Update DISPLAY fields
+        if (beratDisplay) beratDisplay.value = totalBerat.toFixed(1) + ' kg';
+        if (dagingDisplay) dagingDisplay.value = perkiraanDaging.toFixed(1) + ' kg';
 
-        if (tipe.value === 'transfer') {
-            hargaDisplay.value = 'Rp ' + totalHarga.toLocaleString('id-ID');
+        if (tipePendaftaran.value === 'transfer') {
+            if (hargaDisplay) hargaDisplay.value = 'Rp ' + totalHarga.toLocaleString('id-ID');
         } else {
-            hargaDisplay.value = 'Tidak ada biaya (Kirim hewan langsung)';
+            if (hargaDisplay) hargaDisplay.value = 'Tidak ada biaya (Kirim hewan langsung)';
         }
-
-        // Debug log (opsional)
-        console.log('Hitung - Jenis Hewan:', jenisHewanLower);
-        console.log('Hitung - Detail:', {
-            beratPerEkor: beratPerEkor,
-            totalHewan: totalHewan,
-            totalBeratHidup: hasilPerhitungan.totalBeratHidup,
-            beratKarkas: hasilPerhitungan.beratKarkas,
-            dagingMurni: hasilPerhitungan.dagingMurni,
-            kepala: hasilPerhitungan.kepalaTotal,
-            kaki: hasilPerhitungan.kakiTotal,
-            ekor: hasilPerhitungan.ekorTotal,
-            jeroan: hasilPerhitungan.jeroanTotal,
-            totalDaging: perkiraanDaging
-        });
-        console.log('Hitung - Hidden Values:', {
-            berat: beratHidden.value,
-            daging: dagingHidden.value,
-            harga: hargaHidden.value,
-            jenis: jenisHidden.value
-        });
     }
 
-    // Fungsi untuk toggle form visibility
-    function toggleFormSections() {
-        const isTransfer = tipe.value === 'transfer';
-        const isKirim = tipe.value === 'kirim langsung';
+    // =============================================
+    // 5. TOAST NOTIFICATION
+    // =============================================
+    function showToast(message, type = 'info') {
+        const existingToasts = document.querySelectorAll('.custom-toast');
+        existingToasts.forEach(toast => toast.remove());
 
-        // Toggle visibility
-        transferGroup.style.display = isTransfer ? 'block' : 'none';
-        buktiGroup.style.display = isTransfer ? 'block' : 'none';
-        kirimGroup.style.display = isKirim ? 'block' : 'none';
-        beratKirimGroup.style.display = isKirim ? 'block' : 'none';
+        const toast = document.createElement('div');
+        toast.className = `custom-toast toast-${type}`;
+        toast.innerHTML = `
+            <div class="toast-content">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+            </div>
+        `;
 
-        // Toggle required attributes
-        hewanSelect.required = isTransfer;
-        jenisHewanInput.required = isKirim;
-        beratKirimInput.required = isKirim;
+        document.body.appendChild(toast);
 
-        const buktiInput = document.querySelector('input[name="bukti_pembayaran"]');
-        if (buktiInput) buktiInput.required = isTransfer;
+        setTimeout(() => toast.classList.add('show'), 10);
 
-        // Reset jika berganti tipe
-        if (isTransfer) {
-            jenisHewanInput.value = '';
-            beratKirimInput.value = '';
-        } else if (isKirim) {
-            hewanSelect.value = '';
-        }
-
-        // Hitung ulang
-        hitungDanUpdate();
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
     }
 
-    // Event listener untuk form submit (debugging)
-    form.addEventListener('submit', function (e) {
-        console.log('=== FORM SUBMIT DATA ===');
-        console.log('Tipe:', tipe.value);
-        console.log('Hidden Fields:', {
-            berat_hewan: beratHidden.value,
-            perkiraan_daging: dagingHidden.value,
-            total_harga: hargaHidden.value,
-            jenis_hewan: jenisHidden.value
-        });
-        console.log('Form Data:');
+    // =============================================
+    // 6. EVENT LISTENERS
+    // =============================================
+    if (tipePendaftaran) {
+        tipePendaftaran.addEventListener('change', toggleFormSections);
+    }
 
-        const formData = new FormData(this);
-        for (let [key, value] of formData.entries()) {
-            console.log(key + ':', value);
-        }
+    if (bankSelect) {
+        bankSelect.addEventListener('change', updateBankDetail);
+    }
 
-        // Validasi sebelum submit
-        if (tipe.value === 'transfer' && !hewanSelect.value) {
-            e.preventDefault();
-            alert('Pilih hewan untuk tipe transfer');
-            return;
-        }
+    if (hewanSelect) {
+        hewanSelect.addEventListener('change', hitungDanUpdate);
+    }
 
-        if (tipe.value === 'transfer' && (!beratHidden.value || !dagingHidden.value || !hargaHidden
-            .value)) {
-            e.preventDefault();
-            alert('Data belum lengkap. Silakan tunggu perhitungan selesai.');
-            return;
-        }
+    if (jumlahInput) {
+        jumlahInput.addEventListener('input', hitungDanUpdate);
+    }
 
-        // Nonaktifkan button saat submit
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = 'Menyimpan...';
-    });
+    if (jenisHewanInput) {
+        jenisHewanInput.addEventListener('input', hitungDanUpdate);
+    }
 
-    // Event listeners untuk perubahan
-    tipe.addEventListener('change', toggleFormSections);
-    hewanSelect.addEventListener('change', hitungDanUpdate);
-    jumlahInput.addEventListener('input', hitungDanUpdate);
-    jenisHewanInput.addEventListener('input', hitungDanUpdate);
-    beratKirimInput.addEventListener('input', hitungDanUpdate);
+    if (beratKirimInput) {
+        beratKirimInput.addEventListener('input', hitungDanUpdate);
+    }
 
-    // Inisialisasi saat load
-    toggleFormSections();
-
-    // Jika ada old input dari session, set nilai
-    function setOldValues() {
-        const form = document.getElementById('orderForm');
-        if (!form) return;
-
-        // Helper function untuk cek nilai
-        const hasValue = (val) => val !== null && val !== undefined && val !== '';
-
-        const oldTipe = form.dataset.oldTipe;
-        const oldHewan = form.dataset.oldHewan;
-        const oldBerat = form.dataset.oldBerat;
-        const oldDaging = form.dataset.oldDaging;
-        const oldHarga = form.dataset.oldHarga;
-        const oldJenis = form.dataset.oldJenis;
-
-        // Set nilai jika ada
-        if (hasValue(oldTipe)) {
-            tipe.value = oldTipe;
+    // =============================================
+    // 7. INITIALIZATION
+    // =============================================
+    function initializeForm() {
+        // Toggle form sections berdasarkan nilai awal
+        if (tipePendaftaran) {
             toggleFormSections();
-        }
 
-        if (hasValue(oldHewan) && hewanSelect) {
-            hewanSelect.value = oldHewan;
-        }
-
-        if (hasValue(oldBerat)) {
-            if (beratHidden) beratHidden.value = oldBerat;
-            if (beratDisplay) beratDisplay.value = oldBerat + ' kg';
-        }
-
-        if (hasValue(oldDaging)) {
-            if (dagingHidden) dagingHidden.value = oldDaging;
-            if (dagingDisplay) dagingDisplay.value = oldDaging + ' kg';
-        }
-
-        if (hasValue(oldHarga)) {
-            if (hargaHidden) hargaHidden.value = oldHarga;
-            if (hargaDisplay) {
-                hargaDisplay.value = oldHarga > 0
-                    ? 'Rp ' + Number(oldHarga).toLocaleString('id-ID')
-                    : 'Tidak ada biaya (Kirim hewan langsung)';
+            // Jika transfer dan sudah ada pilihan bank, tampilkan detail
+            if (tipePendaftaran.value === 'transfer' && bankSelect && bankSelect.value) {
+                updateBankDetail();
             }
         }
 
-        if (hasValue(oldJenis) && jenisHidden) {
-            jenisHidden.value = oldJenis;
-            if (jenisHewanInput && tipe.value === 'kirim langsung') {
-                jenisHewanInput.value = oldJenis;
-            }
-        }
-
-        // Jika ada nilai, hitung ulang
-        if (hasValue(oldTipe) || hasValue(oldHewan) || hasValue(oldBerat)) {
-            hitungDanUpdate();
-        }
+        // Attach copy button listeners jika ada
+        attachCopyButtonListeners();
     }
 
-    setOldValues();
-
-    // Tambahan: Fungsi untuk test perhitungan (opsional, bisa dihapus)
-    window.testPerhitungan = function () {
-        const hasil = hitungPerkiraanDaging(300, 1, 'sapi');
-        console.log('=== TEST PERHITUNGAN SAPI 300kg ===');
-        console.log('Berat Karkas: ' + hasil.beratKarkas.toFixed(1) + ' kg');
-        console.log('Daging Murni: ' + hasil.dagingMurni.toFixed(1) + ' kg');
-        console.log('Kepala: ' + hasil.kepalaTotal.toFixed(1) + ' kg');
-        console.log('Kaki: ' + hasil.kakiTotal.toFixed(1) + ' kg');
-        console.log('Ekor: ' + hasil.ekorTotal.toFixed(1) + ' kg');
-        console.log('Jeroan: ' + hasil.jeroanTotal.toFixed(1) + ' kg');
-        console.log('TOTAL DAGING: ' + hasil.totalDagingDistribusi.toFixed(1) + ' kg');
-        alert('Test perhitungan untuk sapi 300kg: ' + hasil.totalDagingDistribusi.toFixed(1) +
-            ' kg (seharusnya ≈146.1 kg)');
-    };
+    // Panggil initialization
+    initializeForm();
 });

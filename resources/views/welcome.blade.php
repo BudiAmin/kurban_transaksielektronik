@@ -58,17 +58,13 @@
             </button>
         </div>
         <nav class="nav-mobile" id="mobileNav">
-            <a href="#dashboard">Dashboard</a>
-            <a href="#hewan">Hewan Kurban</a>
-            <a href="#peserta">Peserta</a>
-            <a href="#distribusi">Distribusi</a>
             <a href="{{ route('login') }}">Masuk</a>
             <a href="{{ route('register') }}">Daftar</a>
         </nav>
     </header>
 
     <!-- Hero Section -->
-    <section class="hero">
+    <section class="hero p-40 relative">
         <div class="hero-bg"></div>
         <div class="container hero-content">
             <div class="hero-badge">
@@ -88,23 +84,14 @@
                 Kelola ibadah kurban dengan mudah dan transparan. Dari pendaftaran hingga distribusi daging kurban
                 kepada yang berhak.
             </p>
-            <div class="hero-buttons">
+            <div class="hero-buttons m-4">
                 {{-- <a href="{{ route('kurban.create') }}" class="btn btn-gold"> --}}
-                <a href="#" class="btn btn-gold">
+                <a href="#" class="btn btn-gold m-5">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path
                             d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
                     </svg>
                     Daftar Kurban
-                </a>
-                <a href="#peserta" class="btn btn-outline">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="9" cy="7" r="4"></circle>
-                        <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
-                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                    </svg>
-                    Lihat Peserta
                 </a>
             </div>
         </div>

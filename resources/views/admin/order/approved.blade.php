@@ -66,107 +66,11 @@
                     <div class="card custom-card fade-in">
                         <div class="card-body">
                             <!-- Desktop Table View -->
-                            <div class="d-none d-md-block">
-                                <div class="table-responsive">
-                                    <table class="table table-hover mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th width="50">No</th>
-                                                <th>Nama Donatur</th>
-                                                <th>Jenis Hewan</th>
-                                                <th>Tipe Pendaftaran</th>
-                                                <th>Total Hewan</th>
-                                                <th>Total Harga</th>
-                                                <th>Status</th>
-                                                <th>Bukti Pembayaran</th>
-                                                <th width="180" class="text-center">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse($orders as $item)
-                                                <tr class="fade-in">
-                                                    <td class="font-weight-bold">{{ $loop->iteration }}</td>
-                                                    <td>
-                                                        <span class="donor-name">{{ $item->user->name }}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="custom-badge badge-weight">
-                                                            {{ $item->jenis_hewan }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="text-muted">{{ $item->tipe_pendaftaran }}</span>
-                                                    </td>
-                                                    <td>
-                                                        <span class="custom-badge badge-quantity">
-                                                            {{ $item->total_hewan }} ekor
-                                                        </span>
-                                                    </td>
-                                                    <td class="price-tag">
-                                                        Rp {{ number_format($item->total_harga, 0, ',', '.') }}
-                                                    </td>
-                                                    <td>
-                                                        @if($item->status == 'menunggu verifikasi')
-                                                            <span class="custom-badge badge-pending">
-                                                                <i class="fas fa-clock me-1"></i> Menunggu Verifikasi
-                                                            </span>
-                                                        @elseif($item->status == 'disetujui')
-                                                            <span class="custom-badge badge-verified">
-                                                                <i class="fas fa-check-circle me-1"></i> Terverifikasi
-                                                            </span>
-                                                        @elseif($item->status == 'ditolak')
-                                                            <span class="custom-badge badge-rejected">
-                                                                <i class="fas fa-times-circle me-1"></i> Ditolak
-                                                            </span>
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if ($item->bukti_pembayaran)
-                                                            <a href="{{ Storage::url($item->bukti_pembayaran) }}" 
-                                                               target="_blank" 
-                                                               class="btn btn-sm btn-outline-primary proof-btn">
-                                                                <i class="fas fa-eye me-1"></i> Lihat
-                                                            </a>
-                                                        @else
-                                                            <span class="text-muted small">-</span>
-                                                        @endif
-                                                    </td>
-                                                    <td class="text-center">
-                                                        @if ($item->status == 'menunggu verifikasi')
-                                                            <div class="d-flex justify-content-center gap-2">
-                                                                <!-- Tombol Verifikasi -->
-                                                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#verifyModal{{ $item->id }}">
-                                                                    <i class="fas fa-check me-1"></i> Setujui
-                                                                </button>
-                                                                <!-- Tombol Tolak -->
-                                                                <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#rejectModal{{ $item->id }}">
-                                                                    <i class="fas fa-times me-1"></i> Tolak
-                                                                </button>
-                                                            </div>
-                                                        @else
-                                                            <button type="button" class="btn btn-outline-info btn-sm" data-toggle="modal" data-target="#statusModal{{ $item->id }}">
-                                                                <i class="fas fa-info-circle me-1"></i> Detail
-                                                            </button>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="9" class="text-center py-5">
-                                                        <div class="empty-state">
-                                                            <div class="empty-state-icon">
-                                                                <i class="fas fa-receipt"></i>
-                                                            </div>
-                                                            <h4 class="text-gray-700 mb-3">Belum Ada Pembayaran</h4>
-                                                            <p class="text-gray-500 mb-4">Tidak ada data pembayaran peserta yang perlu diverifikasi.</p>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                            <table class="table table-hover mb-0">
+                                <h1 class="h3 mb-0 black text-center">
+                                    Buka diperangkat dimobile
+                                </h1>
+                            </table>
 
                             <!-- Mobile Card View -->
                             <div class="d-md-none">
@@ -174,19 +78,23 @@
                                     <div class="mobile-payment-card fade-in">
                                         <div class="mobile-payment-header">
                                             <div>
-                                                <span class="font-weight-bold text-primary">#{{ $loop->iteration }}</span>
+                                                <span
+                                                    class="font-weight-bold text-primary">#{{ $loop->iteration }}</span>
                                             </div>
                                             <div>
-                                                @if($item->status == 'menunggu verifikasi')
-                                                    <span class="mobile-payment-status" style="background-color: #fef3c7; color: #92400e;">
+                                                @if ($item->status == 'menunggu verifikasi')
+                                                    <span class="mobile-payment-status"
+                                                        style="background-color: #fef3c7; color: #92400e;">
                                                         <i class="fas fa-clock"></i> Menunggu Verifikasi
                                                     </span>
                                                 @elseif($item->status == 'disetujui')
-                                                    <span class="mobile-payment-status" style="background-color: #d1fae5; color: #065f46;">
+                                                    <span class="mobile-payment-status"
+                                                        style="background-color: #d1fae5; color: #065f46;">
                                                         <i class="fas fa-check-circle"></i> Terverifikasi
                                                     </span>
                                                 @elseif($item->status == 'ditolak')
-                                                    <span class="mobile-payment-status" style="background-color: #fee2e2; color: #991b1b;">
+                                                    <span class="mobile-payment-status"
+                                                        style="background-color: #fee2e2; color: #991b1b;">
                                                         <i class="fas fa-times-circle"></i> Ditolak
                                                     </span>
                                                 @endif
@@ -203,7 +111,8 @@
                                                 <div>
                                                     <div class="mobile-label">Jenis Hewan</div>
                                                     <div class="mobile-value">
-                                                        <span class="custom-badge badge-weight">{{ $item->jenis_hewan }}</span>
+                                                        <span
+                                                            class="custom-badge badge-weight">{{ $item->jenis_hewan }}</span>
                                                     </div>
                                                 </div>
                                                 <div>
@@ -214,32 +123,37 @@
                                             <div class="mobile-row">
                                                 <div>
                                                     <div class="mobile-label">Total Harga</div>
-                                                    <div class="mobile-value price-tag">Rp {{ number_format($item->total_harga, 0, ',', '.') }}</div>
+                                                    <div class="mobile-value price-tag">Rp
+                                                        {{ number_format($item->total_harga, 0, ',', '.') }}</div>
                                                 </div>
                                             </div>
                                             @if ($item->bukti_pembayaran)
-                                            <div class="mobile-row">
-                                                <div>
-                                                    <div class="mobile-label">Bukti Pembayaran</div>
-                                                    <div class="mobile-value">
-                                                        <a href="{{ Storage::url($item->bukti_pembayaran) }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                            <i class="fas fa-eye me-1"></i> Lihat Bukti
-                                                        </a>
+                                                <div class="mobile-row">
+                                                    <div>
+                                                        <div class="mobile-label">Bukti Pembayaran</div>
+                                                        <div class="mobile-value">
+                                                            <a href="{{ Storage::url($item->bukti_pembayaran) }}"
+                                                                target="_blank" class="btn btn-sm btn-outline-primary">
+                                                                <i class="fas fa-eye me-1"></i> Lihat Bukti
+                                                            </a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
                                             @endif
                                         </div>
                                         <div class="mobile-payment-actions">
                                             @if ($item->status == 'menunggu verifikasi')
-                                                <button type="button" class="btn btn-success btn-sm flex-fill" data-toggle="modal" data-target="#verifyModal{{ $item->id }}">
+                                                <button type="button" class="btn btn-success btn-sm flex-fill"
+                                                    data-toggle="modal" data-target="#verifyModal{{ $item->id }}">
                                                     <i class="fas fa-check me-1"></i> Setujui
                                                 </button>
-                                                <button type="button" class="btn btn-danger btn-sm flex-fill" data-toggle="modal" data-target="#rejectModal{{ $item->id }}">
+                                                <button type="button" class="btn btn-danger btn-sm flex-fill"
+                                                    data-toggle="modal" data-target="#rejectModal{{ $item->id }}">
                                                     <i class="fas fa-times me-1"></i> Tolak
                                                 </button>
                                             @else
-                                                <button type="button" class="btn btn-outline-info btn-sm flex-fill" data-toggle="modal" data-target="#statusModal{{ $item->id }}">
+                                                <button type="button" class="btn btn-outline-info btn-sm flex-fill"
+                                                    data-toggle="modal" data-target="#statusModal{{ $item->id }}">
                                                     <i class="fas fa-info-circle me-1"></i> Detail Status
                                                 </button>
                                             @endif
@@ -251,7 +165,8 @@
                                             <i class="fas fa-receipt"></i>
                                         </div>
                                         <h4 class="text-gray-700 mb-3">Belum Ada Pembayaran</h4>
-                                        <p class="text-gray-500 mb-4">Tidak ada data pembayaran peserta yang perlu diverifikasi.</p>
+                                        <p class="text-gray-500 mb-4">Tidak ada data pembayaran peserta yang perlu
+                                            diverifikasi.</p>
                                     </div>
                                 @endforelse
                             </div>
@@ -291,7 +206,7 @@
     </a>
 
     <!-- Modals -->
-    @foreach($orders as $item)
+    @foreach ($orders as $item)
         <!-- Verify Modal -->
         <div class="modal fade" id="verifyModal{{ $item->id }}" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
@@ -315,7 +230,8 @@
                                     <li><strong>Nama:</strong> {{ $item->user->name }}</li>
                                     <li><strong>Jenis Hewan:</strong> {{ $item->jenis_hewan }}</li>
                                     <li><strong>Total Hewan:</strong> {{ $item->total_hewan }} ekor</li>
-                                    <li><strong>Total Harga:</strong> Rp {{ number_format($item->total_harga, 0, ',', '.') }}</li>
+                                    <li><strong>Total Harga:</strong> Rp
+                                        {{ number_format($item->total_harga, 0, ',', '.') }}</li>
                                 </ul>
                             </div>
                         </div>
@@ -361,12 +277,8 @@
                                 <label for="alasan_penolakan_reject{{ $item->id }}" class="form-label required">
                                     <i class="fas fa-exclamation-circle me-1"></i>Alasan Penolakan *
                                 </label>
-                                <textarea class="form-control form-textarea" 
-                                          id="alasan_penolakan_reject{{ $item->id }}" 
-                                          name="alasan_penolakan" 
-                                          rows="4"
-                                          placeholder="Berikan alasan penolakan..."
-                                          required></textarea>
+                                <textarea class="form-control form-textarea" id="alasan_penolakan_reject{{ $item->id }}" name="alasan_penolakan"
+                                    rows="4" placeholder="Berikan alasan penolakan..." required></textarea>
                                 <small class="form-text text-muted">Alasan penolakan wajib diisi.</small>
                             </div>
                         </div>
@@ -398,17 +310,17 @@
                     <div class="modal-body">
                         <div class="mb-4">
                             <strong>Status:</strong>
-                            @if($item->status == 'disetujui')
+                            @if ($item->status == 'disetujui')
                                 <span class="badge bg-success ml-2">Terverifikasi</span>
                             @elseif($item->status == 'ditolak')
                                 <span class="badge bg-danger ml-2">Ditolak</span>
                             @endif
                         </div>
-                        
-                        @if($item->alasan_penolakan)
+
+                        @if ($item->alasan_penolakan)
                             <div class="mb-3">
                                 <strong>
-                                    @if($item->status == 'disetujui')
+                                    @if ($item->status == 'disetujui')
                                         Catatan Verifikasi:
                                     @else
                                         Alasan Penolakan:
@@ -420,7 +332,7 @@
                             </div>
                         @endif
 
-                        @if($item->verified_at && $item->verified_by)
+                        @if ($item->verified_at && $item->verified_by)
                             <div class="mb-3">
                                 <strong>Diverifikasi oleh:</strong>
                                 <div class="mt-1">{{ $item->verifier->name ?? 'Admin' }}</div>
@@ -431,7 +343,7 @@
                             </div>
                         @endif
 
-                        @if($item->rejected_at && $item->rejected_by)
+                        @if ($item->rejected_at && $item->rejected_by)
                             <div class="mb-3">
                                 <strong>Ditolak oleh:</strong>
                                 <div class="mt-1">{{ $item->rejector->name ?? 'Admin' }}</div>
@@ -499,7 +411,9 @@
                 if (event.touches.length > 1) {
                     event.preventDefault();
                 }
-            }, { passive: false });
+            }, {
+                passive: false
+            });
 
             let lastTouchEnd = 0;
             document.addEventListener('touchend', function(event) {
@@ -512,13 +426,13 @@
         });
 
         // Modal show/hide events
-        $(document).on('show.bs.modal', '.modal', function () {
+        $(document).on('show.bs.modal', '.modal', function() {
             if ($(window).width() < 768) {
                 $(this).find('.modal-dialog').addClass('m-0');
             }
         });
 
-        $(document).on('hidden.bs.modal', '.modal', function () {
+        $(document).on('hidden.bs.modal', '.modal', function() {
             // Clear textareas when modal is closed
             $(this).find('textarea').val('');
         });

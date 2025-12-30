@@ -1,7 +1,29 @@
-<!DOCTYPE html>
-<html lang="id">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Dashboard Manajemen Kurban">
+    <meta name="author" content="">
 
-@include('components.admin.head')
+    <title>Dashboard Pengelolaan Kurban</title>
+
+    <!-- Custom fonts -->
+    <link href="{{ asset('vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+    <!-- Custom styles -->
+    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+
+
+    {{-- css kostum --}}
+    <link href="{{ asset('css/admin/pelaksanaan/edit.css') }}" rel="stylesheet">
+</head>
+
 
 <body id="page-top">
 
@@ -63,7 +85,9 @@
                             @endif
 
                             <!-- Edit Form -->
-                            <form id="mobilePelaksanaanForm" action="{{ route('admin.pelaksanaan.update', $pelaksanaan->id) }}" method="POST" novalidate>
+                            <form id="mobilePelaksanaanForm"
+                                action="{{ route('admin.pelaksanaan.update', $pelaksanaan->id) }}" method="POST"
+                                novalidate>
                                 @csrf
                                 @method('PUT')
 
@@ -75,12 +99,11 @@
                                                 Tanggal Pendaftaran
                                             </label>
                                             <div class="mobile-date-wrapper">
-                                                <input type="date" 
-                                                       id="Tanggal_Pendaftaran"
-                                                       name="Tanggal_Pendaftaran"
-                                                       class="mobile-form-input @error('Tanggal_Pendaftaran') is-invalid @enderror"
-                                                       value="{{ old('Tanggal_Pendaftaran', optional($pelaksanaan->Tanggal_Pendaftaran)->format('Y-m-d')) }}"
-                                                       required>
+                                                <input type="date" id="Tanggal_Pendaftaran"
+                                                    name="Tanggal_Pendaftaran"
+                                                    class="mobile-form-input @error('Tanggal_Pendaftaran') is-invalid @enderror"
+                                                    value="{{ old('Tanggal_Pendaftaran', optional($pelaksanaan->Tanggal_Pendaftaran)->format('Y-m-d')) }}"
+                                                    required>
                                             </div>
                                             <div class="mobile-form-help">
                                                 Tanggal dimulainya pendaftaran peserta
@@ -97,12 +120,10 @@
                                                 Tanggal Penutupan
                                             </label>
                                             <div class="mobile-date-wrapper">
-                                                <input type="date" 
-                                                       id="Tanggal_Penutupan"
-                                                       name="Tanggal_Penutupan"
-                                                       class="mobile-form-input @error('Tanggal_Penutupan') is-invalid @enderror"
-                                                       value="{{ old('Tanggal_Penutupan', optional($pelaksanaan->Tanggal_Penutupan)->format('Y-m-d')) }}"
-                                                       required>
+                                                <input type="date" id="Tanggal_Penutupan" name="Tanggal_Penutupan"
+                                                    class="mobile-form-input @error('Tanggal_Penutupan') is-invalid @enderror"
+                                                    value="{{ old('Tanggal_Penutupan', optional($pelaksanaan->Tanggal_Penutupan)->format('Y-m-d')) }}"
+                                                    required>
                                             </div>
                                             <div class="mobile-form-help">
                                                 Tanggal terakhir pendaftaran
@@ -119,13 +140,10 @@
                                     <label for="Ketuplak" class="mobile-form-label required">
                                         Nama Ketuplak
                                     </label>
-                                    <input type="text" 
-                                           id="Ketuplak"
-                                           name="Ketuplak"
-                                           class="mobile-form-input @error('Ketuplak') is-invalid @enderror"
-                                           value="{{ old('Ketuplak', $pelaksanaan->Ketuplak) }}"
-                                           placeholder="Masukkan nama ketuplak"
-                                           required>
+                                    <input type="text" id="Ketuplak" name="Ketuplak"
+                                        class="mobile-form-input @error('Ketuplak') is-invalid @enderror"
+                                        value="{{ old('Ketuplak', $pelaksanaan->Ketuplak) }}"
+                                        placeholder="Masukkan nama ketuplak" required>
                                     <div class="mobile-form-help">
                                         Nama penanggung jawab pelaksanaan
                                     </div>
@@ -139,13 +157,10 @@
                                     <label for="Lokasi" class="mobile-form-label required">
                                         Lokasi Pelaksanaan
                                     </label>
-                                    <input type="text" 
-                                           id="Lokasi"
-                                           name="Lokasi"
-                                           class="mobile-form-input @error('Lokasi') is-invalid @enderror"
-                                           value="{{ old('Lokasi', $pelaksanaan->Lokasi) }}"
-                                           placeholder="Masukkan lokasi pelaksanaan"
-                                           required>
+                                    <input type="text" id="Lokasi" name="Lokasi"
+                                        class="mobile-form-input @error('Lokasi') is-invalid @enderror"
+                                        value="{{ old('Lokasi', $pelaksanaan->Lokasi) }}"
+                                        placeholder="Masukkan lokasi pelaksanaan" required>
                                     <div class="mobile-form-help">
                                         Tempat dilaksanakannya kegiatan
                                     </div>
@@ -160,17 +175,34 @@
                                         Tanggal Penyembelihan
                                     </label>
                                     <div class="mobile-date-wrapper">
-                                        <input type="date" 
-                                               id="Penyembelihan"
-                                               name="Penyembelihan"
-                                               class="mobile-form-input @error('Penyembelihan') is-invalid @enderror"
-                                               value="{{ old('Penyembelihan', optional($pelaksanaan->Penyembelihan)->format('Y-m-d')) }}"
-                                               required>
+                                        <input type="date" id="Penyembelihan" name="Penyembelihan"
+                                            class="mobile-form-input @error('Penyembelihan') is-invalid @enderror"
+                                            value="{{ old('Penyembelihan', optional($pelaksanaan->Penyembelihan)->format('Y-m-d')) }}"
+                                            required>
                                     </div>
                                     <div class="mobile-form-help">
                                         Tanggal pelaksanaan penyembelihan
                                     </div>
                                     @error('Penyembelihan')
+                                        <div class="mobile-error-message">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                {{-- Status Pelaksanaan --}}
+                                <div class="mobile-form-group">
+                                    <label for="Status" class="mobile-form-label required">
+                                        Status Pelaksanaan
+                                    </label>
+                                    <select name="Status" id="Status"
+                                        class="mobile-form-select @error('Status') is-invalid @enderror" required>
+                                        <option value="">{{ $pelaksanaan->Status }}</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Closed">Closed</option>
+                                    </select>
+                                    <div class="mobile-form-help">
+                                        Status pelaksanaan kurban
+                                    </div>
+                                    @error('Status')
                                         <div class="mobile-error-message">{{ $message }}</div>
                                     @enderror
                                 </div>
@@ -183,9 +215,10 @@
 
                                 <!-- Form Footer -->
                                 <div class="mobile-form-footer">
-                                    
+
                                     <div class="mobile-form-actions">
-                                        <button type="button" class="mobile-btn mobile-btn-secondary" onclick="window.history.back()">
+                                        <button type="button" class="mobile-btn mobile-btn-secondary"
+                                            onclick="window.history.back()">
                                             <i class="fas fa-times mobile-btn-icon"></i>
                                             Batal
                                         </button>
@@ -254,10 +287,10 @@
             form.addEventListener('submit', function(e) {
                 let isValid = true;
                 const requiredFields = form.querySelectorAll('[required]');
-                
+
                 requiredFields.forEach(field => {
                     field.classList.remove('is-invalid', 'is-valid');
-                    
+
                     if (!field.value.trim()) {
                         field.classList.add('is-invalid');
                         isValid = false;
@@ -286,9 +319,9 @@
                     // Scroll to first error
                     const firstError = form.querySelector('.is-invalid');
                     if (firstError) {
-                        firstError.scrollIntoView({ 
-                            behavior: 'smooth', 
-                            block: 'center' 
+                        firstError.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
                         });
                         firstError.focus();
                     }
@@ -334,7 +367,9 @@
                     input.addEventListener('touchstart', function(e) {
                         e.preventDefault();
                         this.showPicker && this.showPicker();
-                    }, { passive: false });
+                    }, {
+                        passive: false
+                    });
                 });
             }
 
@@ -348,12 +383,12 @@
                         month: 'long',
                         day: 'numeric'
                     });
-                    
+
                     // Show formatted date as placeholder-like text
                     const wrapper = input.parentElement;
                     const existingInfo = wrapper.querySelector('.date-formatted');
                     if (existingInfo) existingInfo.remove();
-                    
+
                     const info = document.createElement('div');
                     info.className = 'date-formatted mobile-form-help';
                     info.textContent = `Dipilih: ${formatted}`;
@@ -406,7 +441,7 @@
                 e.preventDefault();
                 document.getElementById('submitBtn').click();
             }
-            
+
             // Escape to cancel
             if (e.key === 'Escape') {
                 window.history.back();

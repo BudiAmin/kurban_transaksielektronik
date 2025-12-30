@@ -15,6 +15,7 @@ class Pelaksanaan extends Model
         'Ketuplak',
         'Lokasi',
         'Penyembelihan',
+        'Status',
     ];
 
     protected $casts = [
@@ -47,9 +48,9 @@ class Pelaksanaan extends Model
             : '-';
     }
 
-    /**
-     * Cek status apakah pendaftaran masih aktif
-     */
+    // /**
+    //  * Cek status apakah pendaftaran masih aktif
+    //  */
     public function getStatusAttribute()
     {
         $today = now();
@@ -59,14 +60,14 @@ class Pelaksanaan extends Model
             return 'unknown';
         }
 
-        return $today->gt($penutupan) ? 'closed' : 'active';
+        return $today->gt($penutupan) ? 'Closed' : 'Active';
     }
 
     public function getStatusTextAttribute()
     {
         return match ($this->status) {
-            'active' => 'Aktif',
-            'closed' => 'Tutup',
+            'Active' => 'Active',
+            'Closed' => 'Closed',
             default => 'Tidak Diketahui',
         };
     }
@@ -74,5 +75,10 @@ class Pelaksanaan extends Model
     public function penyembelihans()
     {
         return $this->hasMany(Penyembelihan::class);
+    }
+
+    public function distribusi()
+    {
+        return $this->hasMany(DistribusiDaging::class);
     }
 }

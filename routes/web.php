@@ -9,7 +9,9 @@ use App\Http\Controllers\PelaksanaanController;
 use App\Http\Controllers\PenyembelihanController;
 use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\BankController;
 use App\Http\Controllers\DanaOperasionalController;
+use App\Http\Controllers\DistribusiController;
 use App\Http\Controllers\KetersediaanHewanController;
 
 Route::get('/', function () {
@@ -55,11 +57,17 @@ Route::middleware(['auth', 'role:admin_kurban'])->group(
             Route::resource('dana-dkm', DanaDKMController::class);
             Route::resource('dana-operasional', DanaOperasionalController::class);
             Route::resource('users', UsersController::class);
+            Route::resource('distribusi', DistribusiController::class);
+            Route::resource('bank-penerima', BankController::class);
 
             Route::prefix('orders')->group(function () {
                 Route::get('/verifikasi', [OrderController::class, 'verifikasi'])->name('orders.verifikasi');
                 Route::get('/approved', [OrderController::class, 'approved'])->name('orders.approved');
                 Route::get('/rejected', [OrderController::class, 'rejected'])->name('orders.rejected');
+            });
+
+            Route::prefix('distributions')->group(function () {
+                Route::get('/perkiraan-penerima', [DistribusiController::class, 'perkiraanPenerima'])->name('distributions.perkiraan-penerima');
             });
 
 

@@ -60,41 +60,6 @@
 
                                     <!-- Table Container -->
                                     <div class="table-responsive">
-                                        <table class="table-custom d-none d-md-table">
-                                            <thead>
-                                                <tr>
-                                                    <th width="50">No</th>
-                                                    <th>Keperluan</th>
-                                                    <th>Jumlah Pengeluaran</th>
-                                                    <th >Sumber Dana</th>
-                                                    <th >Keterangan</th>
-                                                    <th>Penanggung Jawab</th>
-                                                    <th>Tanggal Pengeluaran</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                @forelse ($dana_operasional as $item)
-                                                    <tr>
-                                                        <td class="text-center">{{ $loop->iteration }}</td>
-                                                        <td class="">{{ $item->keperluan ?? '-'}}</td>
-                                                        <td >{{ number_format($item->jumlah_pengeluaran ?? 0, 0, ',', '.') }}</td>
-                                                        <td>{{ $item->danaDkm?->sumber_dana ?? '-' }}</td>
-                                                        <td >{{ $item->keterangan ?? '-' }}</td>
-                                                        <td >{{ $item->user?->name ?? '-' }}</td>
-                                                        <td>{{ $item->created_at->format('d/m/Y H:i') }}</td>
-                                                    </tr>
-                                                @empty
-                                                    <tr>
-                                                        <td colspan="6" class="text-center py-4">
-                                                            <div class="empty-state">
-                                                                <i class="fas fa-database"></i>
-                                                                <p class="mt-2 mb-0">Tidak ada data yang tersedia</p>
-                                                            </div>
-                                                        </td>
-                                                    </tr>
-                                                @endforelse
-                                            </tbody>
-                                        </table>
 
                                         <!-- Mobile Table View -->
                                         <div class="d-md-none">

@@ -13,11 +13,19 @@ return new class extends Migration
     {
         Schema::create('pelaksanaans', function (Blueprint $table) {
             $table->id();
+
             $table->date('Tanggal_Pendaftaran')->nullable();
+
             $table->date('Tanggal_Penutupan')->nullable();
+
             $table->string('Ketuplak')->nullable();
+
             $table->string('Lokasi')->nullable();
+
             $table->date('Penyembelihan')->nullable();
+
+            $table->enum('Status', ['Closed', 'Active'])->default('Active');
+
             $table->timestamps();
         });
     }

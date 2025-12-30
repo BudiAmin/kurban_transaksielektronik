@@ -29,13 +29,13 @@
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <div>
                             <h1 class="h3 mb-0 text-gray-800">
-                                Data Keuangan Kurban
+                                Bank Penerima Pembayaran Kurban
                             </h1>
-                            <p class="text-muted mb-0">Kelola kas pelaksanaan kurban termasuk <strong> uang pendaftaran</strong> dan <strong>operasional kurban</strong></p>
+                            <p class="text-muted mb-0">Kelola nama bank penerima dana pembayaran kurban</p>
                         </div>
                         <div class="btn-group-responsive">
-                            <a href="{{ route('admin.dana-dkm.create') }}" class="btn btn-custom shadow-sm">
-                                <i class="fas fa-plus-circle fa-sm mr-2"></i>Tambah Kas Kurban
+                            <a href="{{ route('admin.bank-penerima.create') }}" class="btn btn-custom shadow-sm">
+                                <i class="fas fa-plus-circle fa-sm mr-2"></i>Tambah Bank
                             </a>
                         </div>
                     </div>
@@ -45,25 +45,15 @@
                         <div class="col-12">
                             <div class="card shadow mb-4">
                                 <!-- Card Header -->
-                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Overview Keuangan</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                    </div>
-                                </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                   @include('components.admin.message')
+                                    @include('components.admin.message')
 
                                     <!-- Table Container -->
                                     <div class="table-responsive">
-
                                         <!-- Mobile Table View -->
                                         <div class="d-md-none">
-                                            @forelse ($dkm as $item)
+                                            @forelse ($bank as $item)
                                                 <div class="card mb-3">
                                                     <div class="card-body">
                                                         <div class="row">
@@ -72,30 +62,34 @@
                                                                 <strong>{{ $loop->iteration }}</strong>
                                                             </div>
                                                             <div class="col-6 text-right">
-                                                                <small class="text-muted d-block">Tanggal Diterima</small>
-                                                                <strong>{{ $item->created_at->format('d/m/Y H:i') }}</strong>
+                                                                <small class="text-muted d-block">Nama Bank</small>
+                                                                <strong>{{ $item->nama_bank ?? '-' }}</strong>
                                                             </div>
                                                         </div>
                                                         <hr>
                                                         <div class="mb-2">
+                                                            <small class="text-muted d-block">Nomor Rekening</small>
+                                                            <strong>{{ $item->no_rek ?? '-' }}</strong>
+                                                        </div>
+                                                        <div class="mb-2">
                                                             <small class="text-muted d-block">Atas Nama</small>
-                                                            <strong>{{ $item->order->user->name ?? '-' }}</strong>
+                                                            <strong
+                                                                class="text-primary">{{ $item->as_nama ?? '-' }}</strong>
                                                         </div>
-                                                        <div class="mb-2">
-                                                            <small class="text-muted d-block">Bank Penerima</small>
-                                                            <strong>{{ $item->order->bank->nama_bank ?? '-' }}</strong>
-                                                        </div>
-                                                        <div class="mb-2">
-                                                            <small class="text-muted d-block">Sumber Dana</small>
-                                                            <strong>{{ $item->sumber_dana }}</strong>
-                                                        </div>
-                                                        <div class="mb-2">
-                                                            <small class="text-muted d-block">Jumlah Dana</small>
-                                                            <strong class="text-primary">Rp {{ number_format($item->jumlah_dana, 0, ',', '.') }}</strong>
-                                                        </div>
-                                                        <div class="mb-0">
-                                                            <small class="text-muted d-block">Keterangan</small>
-                                                            <strong>{{ $item->Keterangan }}</strong>
+                                                        <div class="d-flex justify-content-center pt-2">
+                                                            <form
+                                                                action="{{ route('admin.ketersediaan-hewan.destroy', $item->id) }}"
+                                                                method="POST" class="d-inline"
+                                                                onsubmit="return confirmDelete()">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="action-btn btn-danger border-0 mx-2"
+                                                                    title="Hapus">
+                                                                    <i class="fas fa-trash fa-sm text-white"></i>
+                                                                    <span class="d-none d-sm-inline ml-1">Hapus</span>
+                                                                </button>
+                                                            </form>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -105,18 +99,6 @@
                                                     <p class="mt-2 mb-0">Tidak ada data yang tersedia</p>
                                                 </div>
                                             @endforelse
-                                        </div>
-                                    </div>
-
-                                    <!-- Total Keuangan -->
-                                    <div class="total-card">
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="mb-0">TOTAL KEUANGAN</h6>
-                                            </div>
-                                            <div>
-                                                <h4 class="mb-0">Rp {{ number_format($jumlahDana, 0, ',', '.') }}</h4>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>

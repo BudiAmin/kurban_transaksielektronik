@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="utf-8">
@@ -23,7 +23,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link href="{{ asset('css/admin/ketersediaan/index.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/admin/style.css') }}">
 </head>
 
 <body id="page-top">
@@ -50,27 +50,57 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
+                        <div>
+                            <h1 class="h3 mb-0 text-gray-800">
+                                <i class="fas fa-tachometer-alt text-primary mr-2"></i>Dashboard Manajemen Kurban
+                            </h1>
+                            <p class="text-muted mb-0">Ringkasan statistik dan aktivitas sistem kurban</p>
+                        </div>
                     </div>
 
-                    <!-- Content Row -->
-                    <div class="row">
+                    <!-- Messages -->
+                    @include('components.admin.message')
 
+                    <!-- Quick Stats Row -->
+                    <div class="row mb-4">
                         <!-- Total Peserta -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card dashboard-card border-left-primary">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Total Peserta Kurban</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $total_peserta }}
+                                            <div class="metric-label">Total Peserta Kurban</div>
+                                            <div class="metric-value text-gray-800">{{ $total_peserta ?? 0 }}</div>
+                                            <div class="metric-change positive mt-2">
+                                                <i class="fas fa-arrow-up mr-1"></i>Total seluruh peserta
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-user fa-2x text-gray-300"></i>
+                                            <div class="card-icon text-primary">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Total Hewan -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card dashboard-card border-left-success">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="metric-label">Total Hewan Kurban</div>
+                                            <div class="metric-value text-gray-800">{{ $total_hewan ?? 0 }}</div>
+                                            <div class="metric-change positive mt-2">
+                                                <i class="fas fa-check-circle mr-1"></i>Semua jenis hewan
+                                            </div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="card-icon text-success">
+                                                <i class="fas fa-paw"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -79,67 +109,43 @@
 
                         <!-- Total Daging -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card dashboard-card border-left-info">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Total Daging Terdistribusi</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                {{ $total_berat_daging ? number_format($total_berat_daging, 1) . ' kg' : '-' }}
+                                            <div class="metric-label">Daging Terdistribusi</div>
+                                            <div class="metric-value text-gray-800">
+                                                {{ $total_berat_daging ? number_format($total_berat_daging, 1) . ' kg' : '0 kg' }}
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                            <div class="card-icon text-info">
+                                                <i class="fas fa-weight"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Total Penerima -->
+                        <!-- Total Pendapatan -->
                         <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card dashboard-card border-left-warning">
                                 <div class="card-body">
                                     <div class="row no-gutters align-items-center">
                                         <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Total
-                                                Penerima Manfaat
+                                            <div class="metric-label">Total Pendapatan</div>
+                                            <div class="metric-value text-gray-800">
+                                                Rp{{ $total_pendapatan ? number_format($total_pendapatan, 0, ',', '.') : '0' }}
                                             </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
+                                            <div class="metric-change positive mt-2">
+                                                <i class="fas fa-chart-line mr-1"></i>Total pendapatan
                                             </div>
                                         </div>
                                         <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Total Pendapatan Kurban</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                                Rp.{{ number_format($total_pendapatan, 0, ',', '.') ?? '-' }}</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                            <div class="card-icon text-warning">
+                                                <i class="fas fa-coins"></i>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -147,200 +153,309 @@
                         </div>
                     </div>
 
-                    <!-- Content Row -->
-
+                    <!-- Main Content Row -->
                     <div class="row">
-
-                        <!-- Area Chart -->
-                        {{-- <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Total Pendapatan Kurban</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <canvas id="myAreaChart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
-
-
-                        <!-- Project Card Example -->
-                        <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
+                        <!-- Status Pembayaran Chart -->
+                        <div class="col-xl-8 col-lg-7 mb-4">
+                            <div class="card dashboard-card">
                                 <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                                    <h6 class="m-0 font-weight-bold text-primary">Status Pembayaran</h6>
-                                    <span class="badge">
-                                        Total: {{ $orders['total'] }} Order
-                                    </span>
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-credit-card mr-2"></i>Status Pembayaran Peserta
+                                    </h6>
+                                    <span class="badge badge-primary">Total: {{ $orders['total'] ?? 0 }} Order</span>
                                 </div>
                                 <div class="card-body">
-                                    <!-- Ditolak -->
+                                    <!-- Disetujui -->
                                     <div class="mb-4">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <h6 class="small font-weight-bold mb-0">
-                                                <i class="fas fa-times-circle text-danger me-1"></i> Ditolak
-                                            </h6>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div>
-                                                <span
-                                                    class="text-muted small me-2">{{ $orders['ditolak']['count'] ?? 0 }}
-                                                    order</span>
-                                                <span
-                                                    class="font-weight-bold">{{ $paymentStats['ditolak']['percent'] ?? 0 }}%</span>
+                                                <span class="font-weight-bold text-success">
+                                                    <i class="fas fa-check-circle mr-1"></i>Disetujui
+                                                </span>
+                                                <small class="text-muted ml-2">
+                                                    {{ $orders['disetujui']['count'] ?? 0 }} order
+                                                </small>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="font-weight-bold text-dark">
+                                                    {{ $paymentStats['disetujui']['percent'] ?? 0 }}%
+                                                </span>
+                                                <div class="text-success small">
+                                                    Rp{{ number_format($orders['disetujui']['total_nominal'] ?? 0, 0, ',', '.') }}
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="progress" style="height: 10px;">
-                                            <div class="progress-bar bg-danger" role="progressbar"
-                                                style="width: {{ $paymentStats['ditolak']['percent'] ?? 0 }}%"
-                                                aria-valuenow="{{ $paymentStats['ditolak']['percent'] ?? 0 }}"
-                                                aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress progress-thin">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                style="width: {{ $paymentStats['disetujui']['percent'] ?? 0 }}%">
                                             </div>
                                         </div>
                                     </div>
 
                                     <!-- Menunggu Verifikasi -->
                                     <div class="mb-4">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <h6 class="small font-weight-bold mb-0">
-                                                <i class="fas fa-clock text-warning me-1"></i> Menunggu Verifikasi
-                                            </h6>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div>
-                                                <span
-                                                    class="text-muted small me-2">{{ $paymentStats['menunggu verifikasi']['count'] ?? 0 }}
-                                                    order</span>
-                                                <span
-                                                    class="font-weight-bold">{{ $paymentStats['menunggu verifikasi']['percent'] ?? 0 }}%</span>
+                                                <span class="font-weight-bold text-warning">
+                                                    <i class="fas fa-clock mr-1"></i>Menunggu Verifikasi
+                                                </span>
+                                                <small class="text-muted ml-2">
+                                                    {{ $orders['menunggu_verifikasi']['count'] ?? 0 }} order
+                                                </small>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="font-weight-bold text-dark">
+                                                    {{ $paymentStats['menunggu verifikasi']['percent'] ?? 0 }}%
+                                                </span>
+                                                <div class="text-warning small">
+                                                    Rp{{ number_format($orders['menunggu_verifikasi']['total_nominal'] ?? 0, 0, ',', '.') }}
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="progress" style="height: 10px;">
+                                        <div class="progress progress-thin">
                                             <div class="progress-bar bg-warning" role="progressbar"
-                                                style="width: {{ $paymentStats['menunggu verifikasi']['percent'] ?? 0 }}%"
-                                                aria-valuenow="{{ $paymentStats['menunggu verifikasi']['percent'] ?? 0 }}"
-                                                aria-valuemin="0" aria-valuemax="100">
+                                                style="width: {{ $paymentStats['menunggu verifikasi']['percent'] ?? 0 }}%">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <!-- Disetujui -->
+                                    <!-- Ditolak -->
                                     <div class="mb-4">
-                                        <div class="d-flex justify-content-between align-items-center mb-1">
-                                            <h6 class="small font-weight-bold mb-0">
-                                                <i class="fas fa-check-circle text-success me-1"></i> Disetujui
-                                            </h6>
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
                                             <div>
-                                                <span
-                                                    class="text-muted small me-2">{{ $paymentStats['disetujui']['count'] ?? 0 }}
-                                                    order</span>
-                                                <span
-                                                    class="font-weight-bold">{{ $paymentStats['disetujui']['percent'] ?? 0 }}%</span>
+                                                <span class="font-weight-bold text-danger">
+                                                    <i class="fas fa-times-circle mr-1"></i>Ditolak
+                                                </span>
+                                                <small class="text-muted ml-2">
+                                                    {{ $orders['ditolak']['count'] ?? 0 }} order
+                                                </small>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="font-weight-bold text-dark">
+                                                    {{ $paymentStats['ditolak']['percent'] ?? 0 }}%
+                                                </span>
+                                                <div class="text-danger small">
+                                                    Rp{{ number_format($orders['ditolak']['total_nominal'] ?? 0, 0, ',', '.') }}
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="progress" style="height: 10px;">
-                                            <div class="progress-bar bg-success" role="progressbar"
-                                                style="width: {{ $paymentStats['disetujui']['percent'] ?? 0 }}%"
-                                                aria-valuenow="{{ $paymentStats['disetujui']['percent'] ?? 0 }}"
-                                                aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress progress-thin">
+                                            <div class="progress-bar bg-danger" role="progressbar"
+                                                style="width: {{ $paymentStats['ditolak']['percent'] ?? 0 }}%">
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <!-- Footer dengan summary -->
-                                <div class="card-footer bg-light py-2">
-                                    <div class="row text-center">
-                                        <div class="col-3 border-end">
-                                            <small class="text-muted d-block">Ditolak</small>
-                                            <span
-                                                class="fw-bold text-danger">{{ $orders['ditolak']['count'] ?? 0 }}</span>
+                                    <!-- Summary Grid -->
+                                    <div class="row text-center mt-4 pt-3 border-top">
+                                        <div class="col-4">
+                                            <div class="summary-card">
+                                                <div class="text-success font-weight-bold">
+                                                    {{ $orders['disetujui']['count'] ?? 0 }}
+                                                </div>
+                                                <small class="text-muted">Disetujui</small>
+                                            </div>
                                         </div>
-                                        <div class="col-3 border-end">
-                                            <small class="text-muted d-block">Menunggu</small>
-                                            <span
-                                                class="fw-bold text-warning">{{ $orders['menunggu_verifikasi']['count'] ?? 0 }}</span>
+                                        <div class="col-4">
+                                            <div class="summary-card">
+                                                <div class="text-warning font-weight-bold">
+                                                    {{ $orders['menunggu_verifikasi']['count'] ?? 0 }}
+                                                </div>
+                                                <small class="text-muted">Menunggu</small>
+                                            </div>
                                         </div>
-                                        <div class="col-3 border-end">
-                                            <small class="text-muted d-block">Disetujui</small>
-                                            <span
-                                                class="fw-bold text-success">{{ $orders['disetujui']['count'] ?? 0 }}</span>
-                                        </div>
-                                        <div class="col-3">
-                                            <small class="text-muted d-block">Total</small>
-                                            <span class="fw-bold text-primary">{{ $orders['total'] }}</span>
+                                        <div class="col-4">
+                                            <div class="summary-card">
+                                                <div class="text-danger font-weight-bold">
+                                                    {{ $orders['ditolak']['count'] ?? 0 }}
+                                                </div>
+                                                <small class="text-muted">Ditolak</small>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Pie Chart -->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Revenue Sources</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button"
-                                            id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                            aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
-                                    </div>
+                        <!-- Quick Actions & Stats -->
+                        <div class="col-xl-4 col-lg-5 mb-4">
+                            <div class="card dashboard-card">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-bolt mr-2"></i>Aksi Cepat
+                                    </h6>
                                 </div>
-                                <!-- Card Body -->
                                 <div class="card-body">
-                                    <div class="chart-pie pt-4 pb-2">
-                                        <canvas id="myPieChart"></canvas>
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ route('admin.pelaksanaan.index') }}" class="quick-action-btn">
+                                            <i class="fas fa-calendar-alt text-primary"></i>
+                                            <span>Kelola Jadwal Penyembelihan</span>
+                                        </a>
+                                        <a href="{{ route('admin.distribusi.index') }}" class="quick-action-btn">
+                                            <i class="fas fa-truck text-success"></i>
+                                            <span>Lihat Distribusi Daging</span>
+                                        </a>
+                                        {{-- <a href="{{ route('admin.peserta.index') }}" class="quick-action-btn"> --}}
+                                        <a href="#" class="quick-action-btn">
+                                            <i class="fas fa-users text-info"></i>
+                                            <span>Kelola Data Peserta</span>
+                                        </a>
+                                        <a href="{{ route('admin.ketersediaan-hewan.index') }}"
+                                            class="quick-action-btn">
+                                            <i class="fas fa-paw text-warning"></i>
+                                            <span>Stok Hewan Kurban</span>
+                                        </a>
                                     </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
+
+                                    <!-- Recent Activities -->
+                                    <div class="mt-4 pt-3 border-top">
+                                        <h6 class="font-weight-bold text-dark mb-3">
+                                            <i class="fas fa-history mr-2"></i>Aktivitas Terbaru
+                                        </h6>
+                                        @if (isset($recent_activities) && count($recent_activities) > 0)
+                                            @foreach ($recent_activities as $activity)
+                                                <div class="activity-item">
+                                                    <div
+                                                        class="activity-icon bg-{{ $activity['color'] ?? 'primary' }} text-white">
+                                                        <i
+                                                            class="{{ $activity['icon'] ?? 'fas fa-info-circle' }}"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="font-weight-bold">{{ $activity['title'] }}</div>
+                                                        <small class="text-muted">{{ $activity['time'] }}</small>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @else
+                                            <div class="text-center py-3">
+                                                <i class="fas fa-info-circle text-muted fa-2x mb-2"></i>
+                                                <p class="text-muted mb-0">Belum ada aktivitas terbaru</p>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Content Row -->
+                    <!-- Additional Stats Row -->
                     <div class="row">
+                        <!-- Jenis Hewan Distribution -->
+                        <div class="col-xl-6 col-lg-6 mb-4">
+                            <div class="card dashboard-card">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-chart-pie mr-2"></i>Distribusi Jenis Hewan
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="jenisHewanChart"></canvas>
+                                    </div>
+                                    @if (isset($hewan_stats) && count($hewan_stats) > 0)
+                                        <div class="row mt-3 text-center">
+                                            @foreach ($hewan_stats as $stat)
+                                                <div class="col">
+                                                    <div class="animal-card">
+                                                        <div class="animal-icon text-{{ $stat['color'] }}">
+                                                            <i class="{{ $stat['icon'] }}"></i>
+                                                        </div>
+                                                        <div class="font-weight-bold">{{ $stat['count'] }}</div>
+                                                        <small class="text-muted">{{ $stat['label'] }}</small>
+                                                        <div class="mt-2">
+                                                            <span class="badge badge-{{ $stat['color'] }}">
+                                                                {{ $stat['percentage'] }}%
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        </div>
 
-                        <!-- Content Column -->
-                        <div class="col-lg-6 mb-4">
+                        <!-- Target vs Realisasi -->
+                        <div class="col-xl-6 col-lg-6 mb-4">
+                            <div class="card dashboard-card">
+                                <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-bullseye mr-2"></i>Target vs Realisasi
+                                    </h6>
+                                    <span class="badge badge-success">{{ $achievement_rate ?? 0 }}% Tercapai</span>
+                                </div>
+                                <div class="card-body">
+                                    <!-- Target Peserta -->
+                                    <div class="mb-4">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="font-weight-bold">Target Peserta</span>
+                                            <span class="font-weight-bold">{{ $target_peserta ?? 0 }} /
+                                                {{ $actual_peserta ?? 0 }}</span>
+                                        </div>
+                                        <div class="progress progress-thin">
+                                            <div class="progress-bar bg-info" role="progressbar"
+                                                style="width: {{ $peserta_achievement ?? 0 }}%">
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <!-- Target Hewan -->
+                                    <div class="mb-4">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="font-weight-bold">Target Hewan</span>
+                                            <span class="font-weight-bold">{{ $target_hewan ?? 0 }} /
+                                                {{ $actual_hewan ?? 0 }}</span>
+                                        </div>
+                                        <div class="progress progress-thin">
+                                            <div class="progress-bar bg-success" role="progressbar"
+                                                style="width: {{ $hewan_achievement ?? 0 }}%">
+                                            </div>
+                                        </div>
+                                    </div>
 
+                                    <!-- Target Pendapatan -->
+                                    <div class="mb-4">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="font-weight-bold">Target Pendapatan</span>
+                                            <span class="font-weight-bold">
+                                                Rp{{ number_format($actual_pendapatan ?? 0, 0, ',', '.') }} /
+                                                Rp{{ number_format($target_pendapatan ?? 0, 0, ',', '.') }}
+                                            </span>
+                                        </div>
+                                        <div class="progress progress-thin">
+                                            <div class="progress-bar bg-warning" role="progressbar"
+                                                style="width: {{ $pendapatan_achievement ?? 0 }}%">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Summary Grid -->
+                                    <div class="row text-center mt-4">
+                                        <div class="col-4">
+                                            <div class="p-3 bg-light rounded">
+                                                <div class="font-weight-bold text-info">
+                                                    {{ $peserta_achievement ?? 0 }}%</div>
+                                                <small class="text-muted">Peserta</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="p-3 bg-light rounded">
+                                                <div class="font-weight-bold text-success">
+                                                    {{ $hewan_achievement ?? 0 }}%</div>
+                                                <small class="text-muted">Hewan</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="p-3 bg-light rounded">
+                                                <div class="font-weight-bold text-warning">
+                                                    {{ $pendapatan_achievement ?? 0 }}%</div>
+                                                <small class="text-muted">Pendapatan</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -354,7 +469,7 @@
             <footer class="sticky-footer bg-white">
                 <div class="container my-auto">
                     <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2021</span>
+                        <span>Copyright &copy; Sistem Manajemen Kurban {{ date('Y') }}</span>
                     </div>
                 </div>
             </footer>
@@ -380,15 +495,133 @@
 
     <!-- Core plugin JavaScript-->
     <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+
     <!-- Custom scripts for all pages-->
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
 
-    <!-- Page level plugins -->
+    <!-- Chart.js -->
     <script src="{{ asset('vendor/chart.js/Chart.min.js') }}"></script>
 
-    <!-- Page level custom scripts -->
-    <script src="{{ asset('js/demo/chart-area-demo.js') }}"></script>
-    <script src="{{ asset('js/demo/chart-pie-demo.js') }}"></script>
+    <!-- Dashboard Custom Script -->
+    <script>
+        $(document).ready(function() {
+            // Initialize tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Jenis Hewan Chart
+            var ctx = document.getElementById('jenisHewanChart').getContext('2d');
+            var jenisHewanChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: {!! json_encode($chart_labels ?? ['Domba', 'Kambing', 'Sapi']) !!},
+                    datasets: [{
+                        data: {!! json_encode($chart_data ?? [30, 40, 30]) !!},
+                        backgroundColor: [
+                            '#4e73df',
+                            '#1cc88a',
+                            '#36b9cc',
+                            '#f6c23e',
+                            '#e74a3b'
+                        ],
+                        hoverBackgroundColor: [
+                            '#2e59d9',
+                            '#17a673',
+                            '#2c9faf',
+                            '#dda20a',
+                            '#be2617'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    cutoutPercentage: 70,
+                    legend: {
+                        display: false
+                    },
+                    tooltips: {
+                        backgroundColor: "rgb(255,255,255)",
+                        bodyFontColor: "#858796",
+                        borderColor: '#dddfeb',
+                        borderWidth: 1,
+                        xPadding: 15,
+                        yPadding: 15,
+                        displayColors: false,
+                        caretPadding: 10,
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                var label = data.labels[tooltipItem.index];
+                                var value = data.datasets[0].data[tooltipItem.index];
+                                var total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                var percentage = Math.round((value / total) * 100);
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Auto-refresh data every 30 seconds
+            setInterval(function() {
+                updateDashboardStats();
+            }, 30000);
+
+            // Function to update dashboard stats via AJAX
+            function updateDashboardStats() {
+                $.ajax({
+                    url: '{{ route('admin/dashboard') }}',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        // Update card values
+                        updateCardValue('#totalPeserta', data.total_peserta);
+                        updateCardValue('#totalHewan', data.total_hewan);
+                        updateCardValue('#totalDaging', data.total_daging + ' kg');
+                        updateCardValue('#totalPendapatan', 'Rp' + formatNumber(data.total_pendapatan));
+
+                        // Update progress bars
+                        updateProgressBar('.progress-disetujui', data.payment_stats.disetujui.percent);
+                        updateProgressBar('.progress-menunggu', data.payment_stats.menunggu.percent);
+                        updateProgressBar('.progress-ditolak', data.payment_stats.ditolak.percent);
+
+                        // Update chart data
+                        jenisHewanChart.data.datasets[0].data = data.chart_data;
+                        jenisHewanChart.update();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating dashboard:', error);
+                    }
+                });
+            }
+
+            // Helper function to update card values with animation
+            function updateCardValue(selector, newValue) {
+                var element = $(selector);
+                element.fadeOut(200, function() {
+                    $(this).text(newValue).fadeIn(200);
+                });
+            }
+
+            // Helper function to update progress bars
+            function updateProgressBar(selector, newValue) {
+                $(selector).css('width', newValue + '%')
+                    .attr('aria-valuenow', newValue);
+            }
+
+            // Helper function to format numbers
+            function formatNumber(num) {
+                return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+            }
+
+            // Initialize all charts
+            initCharts();
+        });
+
+        function initCharts() {
+            // Additional chart initializations can be added here
+        }
+    </script>
 </body>
 
 </html>

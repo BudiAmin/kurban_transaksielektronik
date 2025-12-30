@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\Models\Order;
+use App\Models\Pelaksanaan;
 use Illuminate\Http\Request;
 use App\Models\KetersediaanHewan;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +19,7 @@ class OrderController extends Controller
     public function index()
     {
         $user = auth()->user();
-        
+
         $orders = Order::with('user', 'ketersediaanHewan')
             ->paginate(5);
 
@@ -35,135 +37,101 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+    // Di Controller store() method
     public function store(Request $request)
     {
-        \Log::info('Store Order - Request Data:', $request->all());
-
-        // Validasi dasar
-        $rules = [
+        $validated = $request->validate([
             'tipe_pendaftaran' => 'required|in:transfer,kirim langsung',
-            'total_hewan' => 'required|integer|min:1',
-            'berat_hewan' => 'required|numeric|min:1',
-            'perkiraan_daging' => 'required|numeric|min:0',
-            'total_harga' => 'required|numeric|min:0',
-            'jenis_hewan' => 'required|string|max:100',
-        ];
-
-        // Aturan khusus transfer
-        if ($request->tipe_pendaftaran === 'transfer') {
-            $rules['ketersediaan_hewan_id'] = 'required|exists:ketersediaan_hewan,id';
-            $rules['bukti_pembayaran'] = 'required|file|mimes:jpg,jpeg,png,webp,pdf|max:2048';
-        }
-
-        $data = $request->validate($rules, [
-            'berat_hewan.required' => 'Berat hewan harus diisi',
-            'perkiraan_daging.required' => 'Perkiraan daging harus dihitung',
-            'total_harga.required' => 'Total harga harus dihitung',
-            'jenis_hewan.required' => 'Jenis hewan harus diisi',
+            'ketersediaan_hewan_id' => 'required_if:tipe_pendaftaran,transfer|exists:ketersediaan_hewan,id',
+            'bank_id' => 'required_if:tipe_pendaftaran,transfer|exists:bank_penerima,id',
+            'jenis_hewan' => 'required_if:tipe_pendaftaran,kirim langsung|string|max:100',
+            'berat_kirim' => 'required_if:tipe_pendaftaran,kirim langsung|numeric|min:1',
+            'total_hewan' => 'required|integer|min:1|max:1',
+            'bukti_pembayaran' => 'required_if:tipe_pendaftaran,transfer|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
-
-        \Log::info('Store Order - Validated Data:', $data);
 
         DB::beginTransaction();
 
         try {
-            // Data wajib
-            $data['user_id'] = auth()->id();
-            $data['status'] = 'menunggu verifikasi';
+            /** 1. Ambil pelaksanaan aktif */
+            $pelaksanaanAktif = Pelaksanaan::where('status', 'Active')->first();
 
-            if ($data['tipe_pendaftaran'] === 'transfer') {
-                $hewan = KetersediaanHewan::findOrFail($data['ketersediaan_hewan_id']);
-
-                // Validasi stok
-                if ($hewan->jumlah < $data['total_hewan']) {
-                    return back()->withInput()
-                        ->with('error', 'Stok tidak cukup. Tersedia: ' . $hewan->jumlah . ' ekor');
-                }
-
-                // Override dengan data dari database (untuk snapshot konsisten)
-                $data['jenis_hewan'] = $hewan->jenis_hewan;
-                $data['berat_hewan'] = $hewan->bobot;
-
-                // Hitung ulang untuk memastikan konsistensi
-                $data['total_harga'] = $hewan->harga * $data['total_hewan'];
-                $data['perkiraan_daging'] = $hewan->bobot * $data['total_hewan'] * 0.4;
-
-                // Upload bukti pembayaran
-                // Gunakan path absolute yang berbeda
-                if ($request->hasFile('bukti_pembayaran')) {
-                    $file = $request->file('bukti_pembayaran');
-                    $filename = 'bukti_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-                    // Gunakan path yang benar-benar baru
-                    $customPath = storage_path('app/public/bukti_pembayaran_v2');
-
-                    if (!file_exists($customPath)) {
-                        mkdir($customPath, 0755, true);
-                    }
-
-                    // Simpan dengan nama yang unik
-                    $fullPath = $customPath . '/' . $filename;
-                    $file->move($customPath, $filename);
-
-                    \Log::info('Custom Path Debug:', [
-                        'custom_path' => $customPath,
-                        'full_path' => $fullPath,
-                        'file_exists' => file_exists($fullPath) ? 'YES' : 'NO',
-                        'files_in_dir' => scandir($customPath)
-                    ]);
-
-                    // Simpan path relatif
-                    $data['bukti_pembayaran'] = 'bukti_pembayaran_v2/' . $filename;
-                }
-                // Kurangi stok
-                $hewan->decrement('jumlah', $data['total_hewan']);
-
-                // Update status jika habis
-                if ($hewan->jumlah <= 0) {
-                    $hewan->update(['status' => 'habis']);
-                }
-            } else {
-                // Kirim langsung
-                $data['ketersediaan_hewan_id'] = null;
-                $data['bukti_pembayaran'] = null;
-
-                // Untuk kirim langsung, total_harga = 0
-                $data['total_harga'] = 0;
-
-                // Pastikan perkiraan daging sudah benar
-                if (!isset($data['perkiraan_daging']) || $data['perkiraan_daging'] <= 0) {
-                    $data['perkiraan_daging'] = $data['berat_hewan'] * $data['total_hewan'] * 0.4;
-                }
+            if (!$pelaksanaanAktif) {
+                return back()->withInput()
+                    ->with('error', 'Tidak ada pelaksanaan aktif.');
             }
 
-            \Log::info('Store Order - Final Data untuk Database:', $data);
+            /** 2. Siapkan data dasar */
+            $data = [
+                'user_id' => auth()->id(),
+                'tipe_pendaftaran' => $validated['tipe_pendaftaran'],
+                'total_hewan' => $validated['total_hewan'],
+                'pelaksanaan_id' => $pelaksanaanAktif->id,
+                'status' => $validated['tipe_pendaftaran'] === 'transfer'
+                    ? 'menunggu verifikasi'
+                    : 'disetujui',
+            ];
 
-            // Create order
+            /** 3. LOGIKA TRANSFER */
+            if ($validated['tipe_pendaftaran'] === 'transfer') {
+
+                $hewan = KetersediaanHewan::findOrFail($validated['ketersediaan_hewan_id']);
+
+                if ($hewan->jumlah < $validated['total_hewan']) {
+                    return back()->withInput()
+                        ->with('error', 'Stok hewan tidak mencukupi.');
+                }
+
+                $data += [
+                    'ketersediaan_hewan_id' => $hewan->id,
+                    'jenis_hewan' => $hewan->jenis_hewan,
+                    'berat_hewan' => $hewan->bobot,
+                    'perkiraan_daging' => $hewan->bobot * 0.4,
+                    'total_harga' => $hewan->harga,
+                    'bank_id' => $validated['bank_id'],
+                ];
+
+                if ($request->hasFile('bukti_pembayaran')) {
+                    $data['bukti_pembayaran'] = $request
+                        ->file('bukti_pembayaran')
+                        ->store('bukti_pembayaran', 'public');
+                }
+
+                $hewan->decrement('jumlah');
+            }
+
+            /** 4. LOGIKA KIRIM LANGSUNG */
+            else {
+                $data += [
+                    'ketersediaan_hewan_id' => null,
+                    'bank_id' => null,
+                    'bukti_pembayaran' => null,
+                    'jenis_hewan' => $validated['jenis_hewan'],
+                    'berat_hewan' => $validated['berat_kirim'],
+                    'perkiraan_daging' => $validated['berat_kirim'] * 0.4,
+                    'total_harga' => 0,
+                ];
+            }
+
+            /** 5. SIMPAN ORDER */
             $order = Order::create($data);
 
             DB::commit();
 
-            \Log::info('Store Order - Success! Order ID: ' . $order->id);
-
-            return redirect()
-                ->back()
-                ->with('success', 'Pendaftaran berhasil! Order ID: ' . $order->id)
-                ->with('order_id', $order->id);
+            return redirect()->route('peserta.dashboard')
+                ->with('success', 'Pendaftaran berhasil!');
         } catch (\Throwable $e) {
             DB::rollBack();
 
-            \Log::error('Store Order - Error:', [
+            \Log::error('Store Order Error', [
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'data' => $data ?? []
+                'trace' => $e->getTraceAsString()
             ]);
 
-            return back()
-                ->withInput()
-                ->with('error', 'Gagal menyimpan: ' . $e->getMessage());
+            return back()->withInput()
+                ->with('error', 'Gagal menyimpan data.');
         }
     }
-
 
 
     /**
@@ -273,34 +241,40 @@ class OrderController extends Controller
     // route baru
     public function verifikasi()
     {
+        $user = auth()->user();
+
         // Hanya tampilkan order dengan status 'menunggu_verifikasi'
         $orders = Order::with(['user', 'ketersediaanHewan'])
             ->where('status', 'menunggu verifikasi')
             ->latest()
             ->paginate(10);
 
-        return view('admin/order/persetujuan', compact('orders'));
+        return view('admin/order/persetujuan', compact('orders', 'user'));
     }
 
     // Optional: untuk status lainnya
     public function approved()
     {
+        $user = auth()->user();
+
         $orders = Order::with(['user', 'ketersediaanHewan'])
             ->where('status', 'disetujui')
             ->latest()
             ->paginate(10);
 
-        return view('admin/order/approved', compact('orders'));
+        return view('admin/order/approved', compact('orders', 'user'));
     }
 
     public function rejected()
     {
+        $user = auth()->user();
+
         $orders = Order::with(['user',  'ketersediaanHewan'])
             ->where('status', 'ditolak')
             ->whereNotNull('alasan_penolakan')
             ->latest()
             ->paginate(10);
 
-        return view('admin/order/rejected', compact('orders'));
+        return view('admin/order/rejected', compact('orders', 'user'));
     }
 }

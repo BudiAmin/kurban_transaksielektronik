@@ -8,11 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
-
+    protected $table = 'orders';
+    
     protected $fillable = [
         'user_id',
-        'tipe_pendaftaran',
+        'pelaksanaan_id',
         'ketersediaan_hewan_id',
+        'bank_id',
+        'tipe_pendaftaran',
         'jenis_hewan',
         'berat_hewan',
         'total_hewan',
@@ -38,14 +41,19 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function bank()
+    {
+        return $this->belongsTo(BankPenerima::class);
+    }
+
     public function ketersediaanHewan()
     {
         return $this->belongsTo(KetersediaanHewan::class);
     }
 
-    public function danaDKMs()
+    public function danaDKM()
     {
-        return $this->hasMany(DanaDKM::class, 'order_id');
+        return $this->hasOne(DanaDKM::class);
     }
 
 

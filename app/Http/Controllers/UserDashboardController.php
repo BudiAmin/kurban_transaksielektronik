@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BankPenerima;
 use Carbon\Carbon;
 use App\Models\Order;
 use App\Models\Pelaksanaan;
 use Illuminate\Http\Request;
 use App\Models\Penyembelihan;
+use App\Models\DistribusiDaging;
 use App\Models\KetersediaanHewan;
 use Illuminate\Support\Facades\Auth;
 
@@ -68,9 +70,26 @@ class UserDashboardController extends Controller
 
 // ---------------- Data untuk menampilkan detail pembayaran user ---------------------------
         $detailPembayaran = Order::where('user_id', $userId)
-            ->with('user') // kalau ingin eager load user
+            ->with('user')
             ->get();
 // ---------------- Data untuk menampilkan detail pembayaran user selesai ---------------------------
+
+
+
+//  -------------------------------- Distribusi Daging ----------------------------------------
+        $distribusi = DistribusiDaging::with([
+            'pelaksanaan',
+            'dokumentasi' 
+        ])
+            ->latest()
+            ->paginate(5);
+//  ----------------------------- Distribusi Daging Selesai ------------------------------------
+
+
+
+//  -------------------------------- Bank Penerima ----------------------------------------
+        $bankPenerima = BankPenerima::paginate(5);
+//  ----------------------------- Bank Penerima Selesai ------------------------------------
 
         return view('user/dashboard', compact(
             'ketersediaan_hewan',
@@ -80,7 +99,9 @@ class UserDashboardController extends Controller
             'isOpen',
             'pelaksanaan',
             'detailPembayaran',
-            'penyembelihan'
+            'penyembelihan',
+            'distribusi',
+            'bankPenerima'
         ));
     }
 }
