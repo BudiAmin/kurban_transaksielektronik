@@ -133,4 +133,51 @@ class Order extends Model
     {
         return $this->hasPenyembelihan() && $this->penyembelihan->isTerdistribusi();
     }
+    
+    /**
+     * Check if order can be paid
+     *
+     * @return bool
+     */
+    public function canBePaid(): bool
+    {
+        return in_array($this->status, ['pending', 'menunggu_verifikasi']);
+    }
+
+    /**
+     * Check if order is paid
+     *
+     * @return bool
+     */
+    public function isPaid(): bool
+    {
+        return $this->status === 'disetujui';
+    }
+
+    /**
+     * Check if order is rejected
+     *
+     * @return bool
+     */
+    public function isRejected(): bool
+    {
+        return $this->status === 'ditolak';
+    }
+
+    /**
+     * Get payment status label
+     *
+     * @return string
+     */
+    public function getPaymentStatusLabel(): string
+    {
+        $labels = [
+            'pending' => 'Menunggu Pembayaran',
+            'menunggu_verifikasi' => 'Menunggu Verifikasi',
+            'disetujui' => 'Pembayaran Diterima',
+            'ditolak' => 'Pembayaran Ditolak',
+        ];
+
+        return $labels[$this->status] ?? $this->status;
+    }
 }

@@ -15,6 +15,10 @@ class DanaDKM extends Model
         'keterangan',
     ];
 
+    protected $casts = [
+        'jumlah_dana' => 'decimal:2',
+    ];
+
     // Relationships
     public function order()
     {

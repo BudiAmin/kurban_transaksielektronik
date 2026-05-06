@@ -13,10 +13,16 @@ use App\Http\Controllers\BankController;
 use App\Http\Controllers\DanaOperasionalController;
 use App\Http\Controllers\DistribusiController;
 use App\Http\Controllers\KetersediaanHewanController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Public payment routes
+Route::post('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+Route::get('payment/finish', [PaymentController::class, 'finish'])->name('payment.finish');
+Route::get('payment/error', [PaymentController::class, 'error'])->name('payment.error');
 
 // Route::get('/dashboard', function () {
 //     return view('dashboard');
@@ -35,6 +41,12 @@ Route::middleware(['auth', 'role:peserta_kurban'])
         // Order resource
         Route::resource('order', OrderController::class);
 
+        // Payment routes
+        Route::prefix('payment')->name('payment.')->group(function () {
+            Route::get('order/{order}', [PaymentController::class, 'show'])->name('show');
+            Route::get('order/{order}/snap-token', [PaymentController::class, 'getSnapToken'])->name('get-snap-token');
+            Route::get('verify/{order}', [PaymentController::class, 'verify'])->name('verify');
+        });
         // Optional: custom routes
         Route::get('order/{order}/invoice', [OrderController::class, 'invoice'])
             ->name('order.invoice');
