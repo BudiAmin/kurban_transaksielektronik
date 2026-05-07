@@ -51,6 +51,106 @@
 
                                     <!-- Table Container -->
                                     <div class="table-responsive">
+                                        <!-- Desktop Table View -->
+<div class="d-none d-md-block">
+    <div class="table-responsive shadow-sm rounded">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="bg-light">
+                <tr>
+                    <th class="text-center" width="5%">
+                        No
+                    </th>
+
+                    <th>
+                        Nama Bank
+                    </th>
+
+                    <th>
+                        Nomor Rekening
+                    </th>
+
+                    <th>
+                        Atas Nama
+                    </th>
+
+                    <th class="text-center" width="15%">
+                        Aksi
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse ($bank as $item)
+
+                    <tr>
+
+                        {{-- NOMOR --}}
+                        <td class="text-center align-middle">
+                            {{ $loop->iteration }}
+                        </td>
+
+                        {{-- NAMA BANK --}}
+                        <td class="align-middle">
+
+                            <span class="font-weight-bold text-dark">
+                                {{ $item->nama_bank ?? '-' }}
+                            </span>
+
+                        </td>
+
+                        {{-- NOMOR REKENING --}}
+                        <td class="align-middle">
+
+                            <span class="custom-badge badge-weight">
+                                {{ $item->no_rek ?? '-' }}
+                            </span>
+
+                        </td>
+
+                        {{-- ATAS NAMA --}}
+                        <td class="align-middle">
+
+                            <span class="text-primary font-weight-bold">
+                                {{ $item->as_nama ?? '-' }}
+                            </span>
+
+                        </td>
+
+                        {{-- AKSI --}}
+                        <td class="text-center align-middle">
+
+                            <x-action-buttons
+                                :editRoute="route('admin.bank-penerima.edit', $item->id)"
+                                :deleteRoute="route('admin.bank-penerima.destroy', $item->id)"
+                            />
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+
+                            <i class="fas fa-database fa-2x mb-3 d-block text-gray-300"></i>
+
+                            Tidak ada data bank penerima.
+
+                        </td>
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
                                         <!-- Mobile Table View -->
                                         <div class="d-md-none">
                                             @forelse ($bank as $item)

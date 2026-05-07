@@ -60,6 +60,151 @@
 
                                     <!-- Table Container -->
                                     <div class="table-responsive">
+                                        <!-- Desktop Table View -->
+<div class="d-none d-md-block">
+
+    <div class="table-responsive shadow-sm rounded">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="bg-light">
+                <tr>
+
+                    <th class="text-center" width="5%">
+                        No
+                    </th>
+
+                    <th>
+                        Keperluan
+                    </th>
+
+                    <th>
+                        Jumlah Pengeluaran
+                    </th>
+
+                    <th>
+                        Sumber Dana
+                    </th>
+
+                    <th>
+                        Penanggung Jawab
+                    </th>
+
+                    <th>
+                        Tanggal Pengeluaran
+                    </th>
+
+                    <th>
+                        Keterangan
+                    </th>
+
+                    <th class="text-center" width="15%">
+                        Aksi
+                    </th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse ($dana_operasional as $item)
+
+                    <tr>
+
+                        {{-- NO --}}
+                        <td class="text-center align-middle">
+                            {{ $loop->iteration }}
+                        </td>
+
+                        {{-- KEPERLUAN --}}
+                        <td class="align-middle">
+
+                            <span class="font-weight-bold text-dark">
+
+                                {{ $item->keperluan ?? '-' }}
+
+                            </span>
+
+                        </td>
+
+                        {{-- JUMLAH PENGELUARAN --}}
+                        <td class="align-middle text-danger font-weight-bold">
+
+                            Rp {{ number_format($item->Jumlah_Pengeluaran ?? 0, 0, ',', '.') }}
+
+                        </td>
+
+                        {{-- SUMBER DANA --}}
+                        <td class="align-middle">
+
+                            <span class="custom-badge badge-weight">
+
+                                {{ $item->danaDkm?->sumber_dana ?? '-' }}
+
+                            </span>
+
+                        </td>
+
+                        {{-- PENANGGUNG JAWAB --}}
+                        <td class="align-middle">
+
+                            {{ $item->user?->name ?? '-' }}
+
+                        </td>
+
+                        {{-- TANGGAL --}}
+                        <td class="align-middle">
+
+                            <span class="custom-badge badge-quantity">
+
+                                {{ $item->created_at->format('d M Y H:i') }}
+
+                            </span>
+
+                        </td>
+
+                        {{-- KETERANGAN --}}
+                        <td class="align-middle">
+
+                            {{ $item->Keterangan ?? '-' }}
+
+                        </td>
+
+                        {{-- AKSI --}}
+                        <td class="text-center align-middle">
+
+                            <x-action-buttons
+                                :editRoute="route('admin.dana-operasional.edit', $item->id)"
+                                :deleteRoute="route('admin.dana-operasional.destroy', $item->id)"
+                            />
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+
+                        <td colspan="8" class="text-center py-5 text-muted">
+
+                            <i class="fas fa-database fa-2x mb-3 d-block text-gray-300"></i>
+
+                            Tidak ada data pengeluaran operasional.
+
+                        </td>
+
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
                                         <!-- Mobile Table View -->
                                         <div class="d-md-none">

@@ -46,80 +46,113 @@
                     <div class="card custom-card fade-in">
                         <div class="card-body">
 
-                            <!-- Desktop Table View -->
-                            <div class="d-none d-md-block">
-                                <div class="table-responsive">
-                                    <table class="table table-hover mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th width="50">No</th>
-                                                <th>Jadwal Penyembelihan</th>
-                                                <th>Nama Donatur</th>
-                                                <th>Status</th>
-                                                <th>Dokumentasi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($penyembelihan as $item)
-                                                <tr class="fade-in">
-                                                    <td class="font-weight-bold">{{ $loop->iteration }}</td>
-                                                    <td>
-                                                        <span class="text-primary">
-                                                            {{ \Carbon\Carbon::parse($item->pelaksanaan->Penyembelihan)->format('d M Y') ?? '-' }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        <span
-                                                            class="donor-name">{{ $item->order->user->name ?? '-' }}</span>
-                                                    </td>
-                                                    <td>
-                                                        @php
-                                                            $statusClass = '';
-                                                            if ($item->status == 'menunggu penyembelihan') {
-                                                                $statusClass = 'badge-in-progress';
-                                                            } elseif ($item->status == 'tersembelih') {
-                                                                $statusClass = 'badge-completed';
-                                                            }
-                                                        @endphp
-                                                        <span class="custom-badge {{ $statusClass }}">
-                                                            {{ ucfirst(str_replace('_', ' ', $item->status)) ?? '-' }}
-                                                        </span>
-                                                    </td>
-                                                    <td>
-                                                        @if ($item->dokumentasi_penyembelihan)
-                                                            <img src="{{ asset('storage/' . $item->dokumentasi_penyembelihan) }}"
-                                                                alt="Foto penyembelihan" class="photo-thumbnail"
-                                                                data-toggle="modal"
-                                                                data-target="#imageModal{{ $item->id }}">
-                                                        @else
-                                                            <span class="text-muted small">
-                                                                <i class="fas fa-image mr-1"></i> Belum ada foto
-                                                            </span>
-                                                        @endif
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="5" class="text-center py-5">
-                                                        <div class="empty-state">
-                                                            <div class="empty-state-icon">
-                                                                <i class="fas fa-calendar-times"></i>
-                                                            </div>
-                                                            <h4 class="text-gray-700 mb-3">Belum Ada Jadwal</h4>
-                                                            <p class="text-gray-500 mb-4">Tidak ada data penyembelihan
-                                                                yang tersedia.</p>
-                                                            <a href="{{ route('admin.penyembelihan.create') }}"
-                                                                class="btn btn-custom">
-                                                                <i class="fas fa-plus-circle mr-2"></i>Tambah Data
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
+<!-- Desktop Table View -->
+<div class="d-none d-md-block">
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+                <tr>
+                    <th class="text-center" width="5%">No</th>
+                    <th width="20%">Jadwal Penyembelihan</th>
+                    <th width="25%">Nama Donatur</th>
+                    <th width="20%">Status</th>
+                    <th width="30%" class="text-center">Dokumentasi</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @forelse ($penyembelihan as $item)
+                    @php
+                        $statusClass = '';
+
+                        if ($item->status == 'menunggu penyembelihan') {
+                            $statusClass = 'badge-in-progress';
+                        } elseif ($item->status == 'tersembelih') {
+                            $statusClass = 'badge-completed';
+                        }
+                    @endphp
+
+                    <tr class="fade-in">
+                        <!-- No -->
+                        <td class="text-center font-weight-bold">
+                            {{ $loop->iteration }}
+                        </td>
+
+                        <!-- Jadwal -->
+                        <td>
+                            <div class="font-weight-semibold text-primary">
+                                <i class="fas fa-calendar-alt mr-2"></i>
+                                {{ \Carbon\Carbon::parse($item->pelaksanaan->Penyembelihan)->format('d M Y') ?? '-' }}
+                            </div>
+                        </td>
+
+                        <!-- Donatur -->
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="icon-circle bg-primary text-white mr-3">
+                                    <i class="fas fa-user"></i>
+                                </div>
+
+                                <div>
+                                    <div class="font-weight-bold text-dark">
+                                        {{ $item->order->user->name ?? '-' }}
+                                    </div>
                                 </div>
                             </div>
+                        </td>
+
+                        <!-- Status -->
+                        <td>
+                            <span class="custom-badge {{ $statusClass }}">
+                                {{ ucfirst(str_replace('_', ' ', $item->status)) ?? '-' }}
+                            </span>
+                        </td>
+
+                        <!-- Dokumentasi -->
+                        <td class="text-center">
+                            @if ($item->dokumentasi_penyembelihan)
+                                <img src="{{ asset('storage/' . $item->dokumentasi_penyembelihan) }}"
+                                    alt="Foto penyembelihan"
+                                    class="photo-thumbnail img-thumbnail shadow-sm"
+                                    data-toggle="modal"
+                                    data-target="#imageModal{{ $item->id }}">
+                            @else
+                                <span class="text-muted small">
+                                    <i class="fas fa-image mr-1"></i>
+                                    Belum ada foto
+                                </span>
+                            @endif
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="empty-state">
+                                <div class="empty-state-icon mb-3">
+                                    <i class="fas fa-calendar-times fa-3x text-muted"></i>
+                                </div>
+
+                                <h5 class="text-gray-700">
+                                    Belum Ada Jadwal Penyembelihan
+                                </h5>
+
+                                <p class="text-muted mb-4">
+                                    Data penyembelihan belum tersedia.
+                                </p>
+
+                                <a href="{{ route('admin.penyembelihan.create') }}"
+                                    class="btn btn-custom shadow-sm">
+                                    <i class="fas fa-plus-circle mr-2"></i>
+                                    Tambah Data
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
 
                             <!-- Mobile Card View -->
                             <div class="d-md-none">

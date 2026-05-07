@@ -43,6 +43,101 @@
 
                             <!-- Desktop Table View -->
 
+                            <div class="d-none d-md-block">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                                        <thead class="thead-light">
+                                            <tr>
+                                                <th class="text-center" width="5%">No</th>
+                                                <th>Nama Pengguna</th>
+                                                <th>Email</th>
+                                                <th>Alamat</th>
+                                                <th>No Handphone</th>
+                                                <th class="text-center">Role</th>
+                                                <th class="text-center" width="10%">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @forelse($users as $index => $item)
+                                                <tr>
+                                                    <td class="text-center align-middle">
+                                                        {{ $users->firstItem() + $index }}
+                                                    </td>
+                                                    <td class="align-middle">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center mr-2"
+                                                                style="width:35px; height:35px; min-width:35px; font-size:14px; font-weight:600;">
+                                                                {{ strtoupper(substr($item->name, 0, 1)) }}
+                                                            </div>
+                                                            <span class="font-weight-medium">{{ $item->name }}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="align-middle text-muted">{{ $item->email }}</td>
+                                                    <td class="align-middle">{{ $item->alamat ?? '-' }}</td>
+                                                    <td class="align-middle">{{ $item->no_hp ?? '-' }}</td>
+                                                    <td class="text-center align-middle">
+                                                        @if($item->role === 'admin_kurban')
+                                                            <span class="badge badge-warning text-white px-2 py-1">
+                                                                <i class="fas fa-shield-alt mr-1"></i>Admin Kurban
+                                                            </span>
+                                                        @elseif($item->role === 'admin')
+                                                            <span class="badge badge-danger px-2 py-1">
+                                                                <i class="fas fa-user-shield mr-1"></i>Admin
+                                                            </span>
+                                                        @else
+                                                            <span class="badge badge-info px-2 py-1">
+                                                                <i class="fas fa-user mr-1"></i>{{ ucfirst($item->role ?? 'User') }}
+                                                            </span>
+                                                        @endif
+                                                    </td>
+                                                    <td class="text-center align-middle">
+                                                        <div class="d-flex justify-content-center gap-1">
+                                                            <!-- Tombol Edit Role -->
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-primary edit-role-btn"
+                                                                title="Edit Role"
+                                                                data-toggle="tooltip"
+                                                                data-id="{{ $item->id }}"
+                                                                data-name="{{ $item->name }}"
+                                                                data-email="{{ $item->email }}"
+                                                                data-role="{{ $item->role }}">
+                                                                <i class="fas fa-user-cog fa-xs"></i>
+                                                            </button>
+
+                                                            <!-- Tombol Hapus -->
+                                                            <form action="{{ route('admin.users.destroy', $item->id) }}"
+                                                                method="POST" class="d-inline"
+                                                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit"
+                                                                    class="btn btn-sm btn-danger border-0"
+                                                                    title="Hapus"
+                                                                    data-toggle="tooltip">
+                                                                    <i class="fas fa-trash fa-xs"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @empty
+                                                <tr>
+                                                    <td colspan="7" class="text-center py-5">
+                                                        <div class="empty-state">
+                                                            <div class="empty-state-icon mb-3">
+                                                                <i class="fas fa-users fa-3x text-gray-300"></i>
+                                                            </div>
+                                                            <h5 class="text-gray-600">Belum Ada Pengguna</h5>
+                                                            <p class="text-gray-400">Belum ada data pengguna yang tersedia.</p>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforelse
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                             <!-- Mobile Card View -->
                             <div class="d-md-none mobile-card-view">
                                 @forelse($users as $item)

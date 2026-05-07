@@ -46,11 +46,88 @@
                     <x-data-table>
 
                         {{-- DESKTOP TABLE --}}
-                        <table class="table table-hover mb-0">
-                            <h1 class="h3 mb-0 black text-center">
-                                Buka diperangkat dimobile
-                            </h1>
-                        </table>
+                        <div class="d-none d-md-block">
+                            <div class="table-responsive shadow-sm rounded">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-header bg-light">
+                                        <tr>
+                                            <th scope="col" class="text-center" width="5%">No</th>
+                                            <th scope="col">Jenis Hewan</th>
+                                            <th scope="col">Bobot (kg)</th>
+                                            <th scope="col">Jumlah (ekor)</th>
+                                            <th scope="col">Harga per Ekor</th>
+                                            <th scope="col" class="text-center">Foto</th>
+                                            <th scope="col" class="text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        @forelse($ketersediaan as $item)
+                                            <tr>
+                                                <th scope="row" class="text-center align-middle">
+                                                    {{ $loop->iteration }}
+                                                </th>
+
+                                                <td class="align-middle">
+                                                    {{ $item->jenis_hewan }}
+                                                </td>
+
+                                                <td class="align-middle">
+                                                    <span class="custom-badge badge-weight">
+                                                        {{ $item->bobot_formatted }}
+                                                    </span>
+                                                </td>
+
+                                                <td class="align-middle">
+                                                    <span class="custom-badge badge-quantity">
+                                                        {{ $item->jumlah }} ekor
+                                                    </span>
+                                                </td>
+
+                                                <td class="align-middle">
+                                                    <span class="price-tag">
+                                                        {{ $item->harga_formatted }}
+                                                    </span>
+                                                </td>
+
+                                                <td class="text-center align-middle">
+                                                    @if ($item->foto)
+                                                        <img src="{{ $item->foto_url }}"
+                                                            alt="{{ $item->jenis_hewan }}"
+                                                            class="table-photo rounded shadow-sm"
+                                                            data-toggle="modal"
+                                                            data-target="#imageModal{{ $item->id }}"
+                                                            style="cursor: pointer; width: 60px; height: 60px; object-fit: cover;">
+                                                    @else
+                                                        <div class="table-photo bg-light d-inline-flex align-items-center justify-content-center rounded shadow-sm"
+                                                            style="width: 60px; height: 60px;">
+                                                            <i class="fas fa-image text-muted"></i>
+                                                        </div>
+                                                    @endif
+                                                </td>
+
+                                   <td class="text-center align-middle">
+
+                                        <x-action-buttons
+                                            :editRoute="route('admin.ketersediaan-hewan.edit', $item->id)"
+                                            :deleteRoute="route('admin.ketersediaan-hewan.destroy', $item->id)"
+                                        />
+
+                                    </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="7" class="text-center py-5 text-muted">
+                                                    <i class="fas fa-box-open fa-2x mb-2 d-block text-gray-300"></i>
+
+                                                    Tidak ada data ketersediaan hewan.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
                         {{-- MOBILE VIEW --}}
                         <x-slot name="mobile">

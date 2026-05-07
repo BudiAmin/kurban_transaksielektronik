@@ -60,6 +60,152 @@
 
                                     <!-- Table Container -->
                                     <div class="table-responsive">
+                                        <!-- Desktop Table View -->
+                                     <!-- Desktop Table View -->
+<div class="d-none d-md-block">
+
+    <div class="table-responsive shadow-sm rounded">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="bg-light">
+                <tr>
+
+                    <th class="text-center" width="5%">
+                        No
+                    </th>
+
+                    <th>
+                        Tanggal
+                    </th>
+
+                    <th>
+                        Atas Nama
+                    </th>
+
+                    <th>
+                        Bank
+                    </th>
+
+                    <th>
+                        Sumber Dana
+                    </th>
+
+                    <th>
+                        Jumlah Dana
+                    </th>
+
+                    <th>
+                        Keterangan
+                    </th>
+
+                    <th class="text-center" width="15%">
+                        Aksi
+                    </th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse ($dkm as $item)
+
+                    <tr>
+
+                        {{-- NO --}}
+                        <td class="text-center align-middle">
+                            {{ $loop->iteration }}
+                        </td>
+
+                        {{-- TANGGAL --}}
+                        <td class="align-middle">
+
+                            <span class="custom-badge badge-weight">
+
+                                {{ $item->created_at->format('d M Y H:i') }}
+
+                            </span>
+
+                        </td>
+
+                        {{-- ATAS NAMA --}}
+                        <td class="align-middle">
+
+                            <span class="font-weight-bold text-dark">
+
+                                {{ $item->order->user->name ?? '-' }}
+
+                            </span>
+
+                        </td>
+
+                        {{-- BANK --}}
+                        <td class="align-middle">
+
+                            {{ $item->order->bank->nama_bank ?? '-' }}
+
+                        </td>
+
+                        {{-- SUMBER DANA --}}
+                        <td class="align-middle">
+
+                            <span class="custom-badge badge-quantity">
+
+                                {{ $item->sumber_dana }}
+
+                            </span>
+
+                        </td>
+
+                        {{-- JUMLAH DANA --}}
+                        <td class="align-middle text-success font-weight-bold">
+
+                            Rp {{ number_format($item->jumlah_dana, 0, ',', '.') }}
+
+                        </td>
+
+                        {{-- KETERANGAN --}}
+                        <td class="align-middle">
+
+                            {{ $item->Keterangan ?? '-' }}
+
+                        </td>
+
+                        {{-- AKSI --}}
+                        <td class="text-center align-middle">
+
+                            <x-action-buttons
+                                :editRoute="route('admin.dana-dkm.edit', $item->id)"
+                                :deleteRoute="route('admin.dana-dkm.destroy', $item->id)"
+                            />
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+
+                        <td colspan="8" class="text-center py-5 text-muted">
+
+                            <i class="fas fa-database fa-2x mb-3 d-block text-gray-300"></i>
+
+                            Tidak ada data keuangan kurban.
+
+                        </td>
+
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
                                         <!-- Mobile Table View -->
                                         <div class="d-md-none">

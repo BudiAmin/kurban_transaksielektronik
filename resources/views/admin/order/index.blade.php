@@ -39,12 +39,235 @@
 
                     <!-- Data Table -->
                     <x-data-table>
-                        {{-- DESKTOP TABLE --}}
-                        <table class="table table-hover mb-0">
-                            <h1 class="h3 mb-0 black text-center">
-                                Buka diperangkat dimobile
-                            </h1>
-                        </table>
+{{-- DESKTOP TABLE --}}
+<div class="d-none d-md-block">
+
+    <div class="table-responsive shadow-sm rounded">
+
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="bg-light">
+                <tr>
+
+                    <th class="text-center" width="5%">
+                        No
+                    </th>
+
+                    <th>
+                        Nama Donatur
+                    </th>
+
+                    <th>
+                        Jenis Hewan
+                    </th>
+
+                    <th class="text-center">
+                        Total Hewan
+                    </th>
+
+                    <th>
+                        Total Harga
+                    </th>
+
+                    <th class="text-center">
+                        Bukti Pembayaran
+                    </th>
+
+                    <th class="text-center">
+                        Status
+                    </th>
+
+                    <th class="text-center" width="20%">
+                        Aksi
+                    </th>
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @forelse($orders as $item)
+
+                    <tr>
+
+                        {{-- NO --}}
+                        <td class="text-center align-middle">
+                            {{ $loop->iteration }}
+                        </td>
+
+                        {{-- NAMA DONATUR --}}
+                        <td class="align-middle">
+
+                            <span class="font-weight-bold text-dark">
+
+                                {{ $item->user->name }}
+
+                            </span>
+
+                        </td>
+
+                        {{-- JENIS HEWAN --}}
+                        <td class="align-middle">
+
+                            <span class="custom-badge badge-weight">
+
+                                {{ $item->jenis_hewan }}
+
+                            </span>
+
+                        </td>
+
+                        {{-- TOTAL HEWAN --}}
+                        <td class="text-center align-middle">
+
+                            <span class="custom-badge badge-quantity">
+
+                                {{ $item->total_hewan }} ekor
+
+                            </span>
+
+                        </td>
+
+                        {{-- TOTAL HARGA --}}
+                        <td class="align-middle text-success font-weight-bold">
+
+                            Rp {{ number_format($item->total_harga, 0, ',', '.') }}
+
+                        </td>
+
+                        {{-- BUKTI PEMBAYARAN --}}
+                        <td class="text-center align-middle">
+
+                            @if ($item->bukti_pembayaran)
+
+                                <a href="{{ Storage::url($item->bukti_pembayaran) }}"
+                                    target="_blank"
+                                    class="btn btn-sm btn-outline-primary">
+
+                                    <i class="fas fa-eye mr-1"></i>
+                                    Lihat
+
+                                </a>
+
+                            @else
+
+                                <span class="text-muted">
+
+                                    -
+
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        {{-- STATUS --}}
+                        <td class="text-center align-middle">
+
+                            @if ($item->status == 'menunggu verifikasi')
+
+                                <span class="badge badge-warning px-3 py-2">
+
+                                    <i class="fas fa-clock mr-1"></i>
+                                    Menunggu
+
+                                </span>
+
+                            @elseif($item->status == 'disetujui')
+
+                                <span class="badge badge-success px-3 py-2">
+
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    Disetujui
+
+                                </span>
+
+                            @elseif($item->status == 'ditolak')
+
+                                <span class="badge badge-danger px-3 py-2">
+
+                                    <i class="fas fa-times-circle mr-1"></i>
+                                    Ditolak
+
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        {{-- AKSI --}}
+                        <td class="text-center align-middle">
+
+                            <div class="d-flex justify-content-center flex-wrap">
+
+                                @if ($item->status == 'menunggu verifikasi')
+
+                                    {{-- BUTTON VERIFIKASI --}}
+                                    <button type="button"
+                                        class="btn btn-success btn-sm mx-1 mb-1"
+                                        data-toggle="modal"
+                                        data-target="#verifyModal{{ $item->id }}">
+
+                                        <i class="fas fa-check mr-1"></i>
+                                        Setujui
+
+                                    </button>
+
+                                    {{-- BUTTON TOLAK --}}
+                                    <button type="button"
+                                        class="btn btn-danger btn-sm mx-1 mb-1"
+                                        data-toggle="modal"
+                                        data-target="#rejectModal{{ $item->id }}">
+
+                                        <i class="fas fa-times mr-1"></i>
+                                        Tolak
+
+                                    </button>
+
+                                @else
+
+                                    {{-- DETAIL STATUS --}}
+                                    <button type="button"
+                                        class="btn btn-info btn-sm mx-1 mb-1"
+                                        data-toggle="modal"
+                                        data-target="#statusModal{{ $item->id }}">
+
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        Detail
+
+                                    </button>
+
+                                @endif
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+
+                        <td colspan="8" class="text-center py-5 text-muted">
+
+                            <i class="fas fa-receipt fa-2x mb-3 d-block text-gray-300"></i>
+
+                            Tidak ada data pembayaran peserta.
+
+                        </td>
+
+                    </tr>
+
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
                         {{-- MOBILE VIEW --}}
                         <x-slot name="mobile">

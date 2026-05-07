@@ -46,12 +46,135 @@
                     <div class="card custom-card fade-in">
                         <div class="card-body">
 
-                            <!-- Desktop Table View -->
-                            <table class="table table-hover mb-0">
-                                <h1 class="h3 mb-0 black text-center">
-                                    Buka diperangkat dimobile
-                                </h1>
-                            </table>
+<!-- Desktop Table View -->
+<div class="d-none d-md-block">
+    <div class="table-responsive shadow-sm rounded">
+        <table class="table table-hover align-middle mb-0">
+
+            <thead class="table-header bg-light">
+                <tr>
+                    <th class="text-center" width="5%">No</th>
+                    <th>Tanggal Penyembelihan</th>
+                    <th>Google Drive</th>
+                    <th class="text-center">Dokumentasi</th>
+                    <th>Tanggal Upload</th>
+                    <th class="text-center">Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @forelse($distribusi as $item)
+                    <tr>
+
+                        {{-- NOMOR --}}
+                        <td class="text-center align-middle">
+                            {{ $loop->iteration }}
+                        </td>
+
+                        {{-- TANGGAL PENYEMBELIHAN --}}
+                        <td class="align-middle">
+                            <span class="custom-badge badge-weight">
+
+                                {{ optional($item->pelaksanaan)->Penyembelihan
+                                    ? \Carbon\Carbon::parse($item->pelaksanaan->Penyembelihan)->format('d M Y')
+                                    : '-' }}
+
+                            </span>
+                        </td>
+
+                        {{-- GOOGLE DRIVE --}}
+                        <td class="align-middle">
+
+                            @if ($item->link_gdrive)
+
+                                <a href="{{ $item->link_gdrive }}"
+                                    target="_blank"
+                                    class="btn btn-sm btn-outline-primary">
+
+                                    <i class="fas fa-external-link-alt mr-1"></i>
+                                    Buka Drive
+                                </a>
+
+                            @else
+
+                                <span class="text-muted">
+                                    -
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        {{-- DOKUMENTASI --}}
+                        <td class="text-center align-middle">
+
+                            @if ($item->dokumentasi && count($item->dokumentasi) > 0)
+
+                                <button type="button"
+                                    class="btn btn-dark btn-sm"
+                                    data-toggle="modal"
+                                    data-target="#imageModal{{ $item->id }}">
+
+                                    <i class="fas fa-eye mr-1"></i>
+                                    Lihat
+
+                                    <span class="badge badge-light ml-1">
+                                        {{ count($item->dokumentasi) }}
+                                    </span>
+
+                                </button>
+
+                            @else
+
+                                <span class="text-muted">
+                                    Tidak Ada
+                                </span>
+
+                            @endif
+
+                        </td>
+
+                        {{-- TANGGAL UPLOAD --}}
+                        <td class="align-middle">
+
+                            <span class="custom-badge badge-quantity">
+
+                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
+
+                            </span>
+
+                        </td>
+
+                        {{-- AKSI --}}
+                        <td class="text-center align-middle">
+
+                            <x-action-buttons
+                                :editRoute="route('admin.distribusi.edit', $item->id)"
+                                :deleteRoute="route('admin.distribusi.destroy', $item->id)"
+                            />
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+
+                            <i class="fas fa-box-open fa-2x mb-3 d-block text-gray-300"></i>
+
+                            Tidak ada data dokumentasi distribusi.
+
+                        </td>
+                    </tr>
+
+                @endforelse
+            </tbody>
+
+        </table>
+    </div>
+</div>
 
                             <!-- Mobile Card View -->
                             <div class="d-md-none mobile-card-view">

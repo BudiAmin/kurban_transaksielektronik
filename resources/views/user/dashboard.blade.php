@@ -295,7 +295,267 @@
             <section>
                 {{-- Jadwal Pelaksanaan Kurban --}}
                 <div class="card">
+                    {{-- DESKTOP VIEW --}}
+<div class="d-none d-lg-block">
 
+    {{-- Jadwal Pelaksanaan Kurban --}}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-1">Jadwal Pelaksanaan Kurban</h3>
+            <p class="muted mb-0">Informasi tanggal, waktu, dan lokasi penyembelihan.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal Pendaftaran</th>
+                        <th>Tanggal Penutupan</th>
+                        <th>Lokasi</th>
+                        <th>Jadwal Penyembelihan</th>
+                        <th>Ketua Pelaksana</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse ($pelaksanaanKurban as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->Tanggal_Pendaftaran)->format('d M Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->Tanggal_Penutupan)->format('d M Y') }}</td>
+                            <td>{{ $item->Lokasi }}</td>
+                            <td>{{ \Carbon\Carbon::parse($item->Penyembelihan)->format('d M Y') }}</td>
+                            <td>{{ $item->Ketuplak }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                Jadwal penyembelihan belum ditetapkan.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Status Pembayaran --}}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-1">Status Pembayaran</h3>
+            <p class="muted mb-0">Status pembayaran dan informasi transaksi.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Donatur</th>
+                        <th>Jenis Hewan</th>
+                        <th>Total Hewan</th>
+                        <th>Total Harga</th>
+                        <th>Tipe</th>
+                        <th>Status</th>
+                        <th>Bukti</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse ($detailPembayaran as $row)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $row->user->name ?? '-' }}</td>
+                            <td>{{ $row->jenis_hewan ?? '-' }}</td>
+                            <td>{{ $row->total_hewan ?? '-' }}</td>
+                            <td>
+                                Rp {{ number_format($row->total_harga, 0, ',', '.') }}
+                            </td>
+                            <td>{{ $row->tipe_pendaftaran ?? '-' }}</td>
+
+                            <td>
+                                <span class="status-badge status-{{ strtolower($row->status ?? 'pending') }}">
+                                    {{ $row->status ?? '-' }}
+                                </span>
+                            </td>
+
+                            <td>
+                                @if ($row->bukti_pembayaran)
+                                    <img src="{{ asset('storage/' . $row->bukti_pembayaran) }}"
+                                        class="desktop-thumbnail"
+                                        alt="Bukti Pembayaran">
+                                @else
+                                    <span class="text-muted">Belum ada</span>
+                                @endif
+                            </td>
+                        </tr>
+
+                        @if ($row->alasan_penolakan)
+                            <tr>
+                                <td colspan="8">
+                                    <div class="alert alert-danger mb-0">
+                                        <strong>Alasan Penolakan:</strong>
+                                        {{ $row->alasan_penolakan }}
+                                    </div>
+                                </td>
+                            </tr>
+                        @endif
+
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                Tidak ada riwayat transaksi.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Dokumentasi Penyembelihan --}}
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3 class="card-title mb-1">Dokumentasi Penyembelihan</h3>
+            <p class="muted mb-0">Dokumentasi penyembelihan hewan kurban.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Donatur</th>
+                        <th>Jenis Hewan</th>
+                        <th>Status</th>
+                        <th>Tanggal</th>
+                        <th>Berat</th>
+                        <th>Daging</th>
+                        <th>Dokumentasi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse ($penyembelihan as $row)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $row->order->user->name ?? '-' }}</td>
+                            <td>{{ $row->order->jenis_hewan ?? '-' }}</td>
+
+                            <td>
+                                <span class="status-badge status-{{ strtolower($row->status ?? 'pending') }}">
+                                    {{ $row->status ?? '-' }}
+                                </span>
+                            </td>
+
+                            <td>
+                                {{ \Carbon\Carbon::parse($row->pelaksanaan->Penyembelihan)->format('d M Y') }}
+                            </td>
+
+                            <td>
+                                {{ $row->order->berat_hewan ? number_format($row->order->berat_hewan, 1) . ' kg' : '-' }}
+                            </td>
+
+                            <td>
+                                {{ $row->order->perkiraan_daging ? number_format($row->order->perkiraan_daging, 1) . ' kg' : '-' }}
+                            </td>
+
+                            <td>
+                                @if ($row->dokumentasi_penyembelihan)
+                                    <img src="{{ asset('storage/' . $row->dokumentasi_penyembelihan) }}"
+                                        class="desktop-thumbnail"
+                                        alt="Dokumentasi">
+                                @else
+                                    <span class="text-muted">Belum ada</span>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                Tidak ada data penyembelihan.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    {{-- Distribusi Daging --}}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title mb-1">Riwayat Distribusi Daging</h3>
+            <p class="muted mb-0">Catatan distribusi daging kurban.</p>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal Penyembelihan</th>
+                        <th>Google Drive</th>
+                        <th>Dokumentasi</th>
+                        <th>Tanggal Upload</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @forelse ($distribusi as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+
+                            <td>
+                                {{ \Carbon\Carbon::parse($item->pelaksanaan->Penyembelihan)->format('d M Y') }}
+                            </td>
+
+                            <td>
+                                @if ($item->link_gdrive)
+                                    <a href="{{ $item->link_gdrive }}"
+                                        target="_blank"
+                                        class="btn btn-sm btn-primary">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        Buka Drive
+                                    </a>
+                                @else
+                                    N/A
+                                @endif
+                            </td>
+
+                            <td>
+                                @if ($item->dokumentasi && count($item->dokumentasi) > 0)
+                                    <button type="button"
+                                        class="btn btn-dark btn-sm"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#imageModal{{ $item->id }}">
+
+                                        <i class="fas fa-images"></i>
+                                        {{ count($item->dokumentasi) }} Gambar
+                                    </button>
+                                @else
+                                    -
+                                @endif
+                            </td>
+
+                            <td>
+                                {{ \Carbon\Carbon::parse($item->created_at)->format('d M Y') }}
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-4">
+                                Belum ada riwayat distribusi daging.
+                            </td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
                     {{-- Mobile Card View --}}
                     <div class="mobile-card-view">
                         <div class="card-header mb-3">
